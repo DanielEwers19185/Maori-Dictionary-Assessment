@@ -15,7 +15,6 @@
     <div class="container">
         <div class="navbar-brand">Maori-English Dictionary</div>
         <div class="navbar-links">
-            <a href="/">home</a>
             {% if logged_in %}
             <a href="/logout">logout</a>
             <a href="/admin">admin</a>
@@ -24,13 +23,25 @@
             <a href="/signup">Signup</a>
             {% endif %}
         </div>
-        <div class="dropdown">
-            <button class="dropbtn">Categories</button>
-            <div class="dropdown-content">
-                <a href="/dictionary">All Categories</a>
+        <div class="dropdown-cat">
+            <button class="dropbtn-cat">Categories</button>
+            <div class="dropdown-content-cat">
+                <a href="#">hello</a>
                 <a href="#">Link 2</a>
                 <a href="#">Link 3</a>
             </div>
+        </div>
+        <div class="dropdown-lev">
+            <button class="dropbtn-lev">Levels</button>
+            <div class="dropdown-content-lev">
+                <a href="#">hello</a>
+                <a href="#">Link 2</a>
+                <a href="#">Link 3</a>
+            </div>
+        </div>
+        <div class="navbar-links">
+            <a href="/">Home</a>
+            <a href="/dictionary">All Categories</a>
         </div>
     </div>
 </nav>
