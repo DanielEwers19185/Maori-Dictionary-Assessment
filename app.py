@@ -47,10 +47,16 @@ def render_dictionary_page(cat_id):
     cat_id = cat_id.strip("<")
     cat_id = cat_id.strip(">")
     con = create_connection(DATABASE)
-    query = "SELECT word, definition, category, level FROM english_words WHERE category =? OR level = ?"
+    query = "SELECT mri_word, eng_word, definition, category, level FROM words WHERE category =? OR level = ?"
     cur = con.cursor()
-    cur.execute(query, (cat_id, cat_id))
+    cur.execute(query, (cat_id, cat_id,))
     word_list = cur.fetchall()
+    for i in range(len(word_list)):
+        query = "SELECT title FROM categories WHERE id =? "
+        cur.execute(query, (word_list[i][3], ))
+        word_list[i] = word_list[i] + (cur.fetchall()[0])
+        cur.execute(query, (word_list[i][4], ))
+        word_list[i] = word_list[i] + (cur.fetchall()[0])
     con.close()
     print(cat_id)
     print(word_list)
@@ -96,7 +102,7 @@ def render_login():
         session['first_name'] = first_name
 
         return redirect('/')
-    return render_template('login.html', cat_list=render_cat_lev_menus(), lev_list=render_cat_lev_menus('L'), logged_in=is_logged_in())
+    return render_template('login.html', cat_list=render_cat_lev_menus('C'), lev_list=render_cat_lev_menus('L'), logged_in=is_logged_in())
 
 @app.route('/logout')
 def logout():
@@ -138,23 +144,23 @@ def render_signup():
 
         return redirect('\login')
 
-    return render_template('signup.html', cat_list=render_cat_lev_menus(), lev_list=render_cat_lev_menus('L'), logged_in=is_logged_in())
+    return render_template('signup.html', cat_list=render_cat_lev_menus('C'), lev_list=render_cat_lev_menus('L'), logged_in=is_logged_in())
 
 @app.route('/admin')
 def render_admin():
     if not is_logged_in():
         return redirect('/?message=Need+to+be+logged+in')
     con = create_connection(DATABASE)
-    query = "SELECT name, description, volume, image, price FROM products WHERE category=?"
+    query = "SELECT mri_word, eng_word, definition, category, level FROM words"
     cur = con.cursor()
     cur.execute(query)
-    product_list = cur.fetchall()
-    query = 'SELECT id FROM categories'
+    word_list = cur.fetchall()
+    query = 'SELECT title FROM categories'
     cur = con.cursor()
     cur.execute(query)
     category_list = cur.fetchall()
     con.close()
-    return render_template("admin.html", cat_list=render_cat_lev_menus(), lev_list=render_cat_lev_menus('L'), logged_in=is_logged_in(), categories=category_list)
+    return render_template("admin.html", cat_list=render_cat_lev_menus('C'), lev_list=render_cat_lev_menus('L'), logged_in=is_logged_in(), categories=category_list, word_list=word_list)
 
 @app.route('/add_category', methods=['POST'])
 def add_category():

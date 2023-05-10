@@ -3,20 +3,21 @@
 {% block pageheading %}
 Dictionary
 {% endblock %}
-
 {% block main %}
     <div class ="words">
         {% for word in word_list %}
         <div class="word-box">
             <div class = "word-box-heading">
                 <h3>{{ word[0] }}</h3>
+                <h3>{{ word[1] }}</h3>
             </div>
             <div class= 'word-box-subheading'>
-                <h4>{{ word[1] }}</h4>
+                <h4>{{ word[2] }}</h4>
             </div>
+
             <div class="word-box-info">
-                <p> {{ word[2] }} </p>
-                <p> {{ word[3] }} </p>
+                <p> {{ word[5] }} </p>
+                <p> {{ word[6] }} </p>
             </div>
         </div>
         {% endfor %}
