@@ -27,15 +27,25 @@ def is_logged_in():
        print("Logged in")
        return True
 
+def render_cat_lev_menus(catlev):
+    con = create_connection(DATABASE)
+    query = "SELECT id, title FROM categories WHERE type=?"
+    cur = con.cursor()
+    cur.execute(query, (catlev))
+    cat_list = cur.fetchall()
+    con.close()
+    return cat_list
+
 @app.route('/')
 def render_homepage():
-    return render_template('home.html', logged_in=is_logged_in())
+
+    return render_template('home.html', cat_list=render_cat_lev_menus('C'), lev_list=render_cat_lev_menus('L'), logged_in=is_logged_in())
 
 
 @app.route('/dictionary')
 def render_dictionary_page():
     con = create_connection(DATABASE)
-    query = "SELECT word, definition, category, level FROM english_words"
+    query = "SELECT word, definition, cat_list=render_cat_lev_menus(), lev_list=render_cat_lev_menus('L'), category, level FROM english_words"
     cur = con.cursor()
     cur.execute(query)
     word_list = cur.fetchall()
@@ -44,12 +54,12 @@ def render_dictionary_page():
     # first_name = ""
     # if is_logged_in () :
     #    first_name = session['fname']
-    return render_template('dictionary.html', word_list=word_list, logged_in=is_logged_in())
+    return render_template('dictionary.html', cat_list=render_cat_lev_menus(), lev_list=render_cat_lev_menus('L'), word_list=word_list, logged_in=is_logged_in())
 
 
 @app.route('/contact')
 def render_content_page():
-    return render_template('contact.html', logged_in=is_logged_in())
+    return render_template('contact.html', cat_list=render_cat_lev_menus(), lev_list=render_cat_lev_menus('L'), logged_in=is_logged_in())
 
 @app.route('/login', methods=['POST', 'GET'])
 def render_login():
@@ -83,7 +93,7 @@ def render_login():
         session['first_name'] = first_name
 
         return redirect('/')
-    return render_template('login.html', logged_in=is_logged_in())
+    return render_template('login.html', cat_list=render_cat_lev_menus(), lev_list=render_cat_lev_menus('L'), logged_in=is_logged_in())
 
 @app.route('/logout')
 def logout():
@@ -125,7 +135,7 @@ def render_signup():
 
         return redirect('\login')
 
-    return render_template('signup.html', logged_in=is_logged_in())
+    return render_template('signup.html', cat_list=render_cat_lev_menus(), lev_list=render_cat_lev_menus('L'), logged_in=is_logged_in())
 
 @app.route('/admin')
 def render_admin():
@@ -141,7 +151,7 @@ def render_admin():
     cur.execute(query)
     category_list = cur.fetchall()
     con.close()
-    return render_template("admin.html", logged_in=is_logged_in(), categories=category_list)
+    return render_template("admin.html", cat_list=render_cat_lev_menus(), lev_list=render_cat_lev_menus('L'), logged_in=is_logged_in(), categories=category_list)
 
 @app.route('/add_category', methods=['POST'])
 def add_category():
