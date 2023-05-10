@@ -44,12 +44,15 @@ def render_homepage():
 
 @app.route('/dictionary/<cat_id>')
 def render_dictionary_page(cat_id):
+    cat_id = cat_id.strip("<")
+    cat_id = cat_id.strip(">")
     con = create_connection(DATABASE)
-    query = "SELECT word, definition, category, level FROM english_words WHERE category=?"
+    query = "SELECT word, definition, category, level FROM english_words WHERE category =? OR level = ?"
     cur = con.cursor()
-    cur.execute(query, (cat_id,))
+    cur.execute(query, (cat_id, cat_id))
     word_list = cur.fetchall()
     con.close()
+    print(cat_id)
     print(word_list)
     # first_name = ""
     # if is_logged_in () :
@@ -142,11 +145,11 @@ def render_admin():
     if not is_logged_in():
         return redirect('/?message=Need+to+be+logged+in')
     con = create_connection(DATABASE)
-    query = "SELECT name, description, volume, image, price FROM products WHERE cat_id=?"
+    query = "SELECT name, description, volume, image, price FROM products WHERE category=?"
     cur = con.cursor()
     cur.execute(query)
     product_list = cur.fetchall()
-    query = 'SELECT id FROM category'
+    query = 'SELECT id FROM categories'
     cur = con.cursor()
     cur.execute(query)
     category_list = cur.fetchall()
