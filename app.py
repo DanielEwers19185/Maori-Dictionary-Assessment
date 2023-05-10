@@ -42,19 +42,19 @@ def render_homepage():
     return render_template('home.html', cat_list=render_cat_lev_menus('C'), lev_list=render_cat_lev_menus('L'), logged_in=is_logged_in())
 
 
-@app.route('/dictionary')
-def render_dictionary_page():
+@app.route('/dictionary/<cat_id>')
+def render_dictionary_page(cat_id):
     con = create_connection(DATABASE)
-    query = "SELECT word, definition, cat_list=render_cat_lev_menus(), lev_list=render_cat_lev_menus('L'), category, level FROM english_words"
+    query = "SELECT word, definition, category, level FROM english_words WHERE category=?"
     cur = con.cursor()
-    cur.execute(query)
+    cur.execute(query, (cat_id,))
     word_list = cur.fetchall()
     con.close()
     print(word_list)
     # first_name = ""
     # if is_logged_in () :
     #    first_name = session['fname']
-    return render_template('dictionary.html', cat_list=render_cat_lev_menus(), lev_list=render_cat_lev_menus('L'), word_list=word_list, logged_in=is_logged_in())
+    return render_template('dictionary.html', cat_list=render_cat_lev_menus('C'), lev_list=render_cat_lev_menus('L'), word_list=word_list, logged_in=is_logged_in())
 
 
 @app.route('/contact')
