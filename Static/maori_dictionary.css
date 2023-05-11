@@ -135,13 +135,13 @@ a, a:visited {
 .myform {
     width: 80%;
     margin: auto;
-    padding-bottom: 1rem;
+    padding-bottom: 2rem;
     margin-bottom: 20px;
-    padding-top: 3rem;
+    padding-top: 2rem;
 }
 
 .form-group {
-    padding-top: 3rem;
+    padding-top: 2rem;
 }
 
 .form-label {

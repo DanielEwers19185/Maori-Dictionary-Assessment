@@ -151,11 +151,11 @@ def render_admin():
     if not is_logged_in():
         return redirect('/?message=Need+to+be+logged+in')
     con = create_connection(DATABASE)
-    query = "SELECT mri_word, eng_word, definition, category, level FROM words"
+    query = "SELECT mri_word, eng_word, definition, category, level, id FROM words"
     cur = con.cursor()
     cur.execute(query)
     word_list = cur.fetchall()
-    query = 'SELECT title FROM categories'
+    query = 'SELECT id, title, type FROM categories'
     cur = con.cursor()
     cur.execute(query)
     category_list = cur.fetchall()
@@ -169,11 +169,13 @@ def add_category():
     if request.method == "POST":
         print(request.form)
         cat_name = request.form.get('name').lower().strip()
+        cat_des = request.form.get('description').lower().strip()
+        cat_type = request.form.get('cat_lev')
         print(cat_name)
         con = create_connection(DATABASE)
-        query = "INSERT INTO categories ('title') VALUES (?)"
+        query = "INSERT INTO categories  ('title', 'description', 'type') VALUES (?, ?, ?)"
         cur = con.cursor()
-        cur.execute(query, (cat_name, ))
+        cur.execute(query, (cat_name, cat_des, cat_type,))
         con.commit()
         con.close()
         return redirect('/admin')
@@ -188,21 +190,72 @@ def render_delete_category():
         category = category.split(', ')
         cat_id = category[0]
         cat_name = category[1]
-        return render_template("delete_confirm.html", cat_id=cat_id, name=cat_name, type='category')
+        return render_template("delete_confirm.html", sub_id=cat_id, name=cat_name, type = "cat")
     return redirect('/admin')
 
-@app.route('/delete_category_confirm/<cat_id>')
-def delete_category_confirm(cat_id):
+@app.route('/delete_confirm/<sub_id>/<type>')
+def delete_category_confirm(sub_id, type):
     if not is_logged_in():
         return redirect('/?message=Need+to+be+logged+in')
     con = create_connection(DATABASE)
-    query = "DELETE FROM category WHERE id = ?"
+    if type == "cat":
+        query = "DELETE FROM categories WHERE id = ?"
+    elif type == "word":
+        query = "DELETE FROM words WHERE id = ?"
     cur = con.cursor()
-    cur.execute(query, (cat_id, ))
+    cur.execute(query, (sub_id, ))
     con.commit()
     con.close()
     return redirect('/admin')
 
+@app.route('/add_word', methods=['POST'])
+def add_word():
+    if not is_logged_in():
+        return redirect('/?message=Need+to+be+logged+in')
+    if request.method == "POST":
+        print(request.form)
+        m_tans = request.form.get('m_trans').lower().strip()
+        e_trans = request.form.get('e_trans').lower().strip()
+        word_def = request.form.get('word_def').lower().strip()
+        w_cat = request.form.get('w_cat')
+        w_lev = request.form.get('w_lev')
+        con = create_connection(DATABASE)
+        query = "INSERT INTO words  ('eng_word', 'category', 'definition', 'level', 'mri_word') VALUES (?, ?, ?, ?, ?)"
+        cur = con.cursor()
+        cur.execute(query, (e_trans, w_cat, word_def, w_lev, m_tans,))
+        con.commit()
+        con.close()
+        return redirect('/admin')
+
+@app.route('/edit_delete_word', methods=['POST'])
+def edit_delete_word():
+    if not is_logged_in():
+        return redirect('/?message=Need+to+be+logged+in')
+    if request.method == "POST":
+        print(request.form)
+        category = request.form.get('e_d_word_cat')
+        con = create_connection(DATABASE)
+        query = "SELECT mri_word, eng_word, definition, category, level, id FROM words WHERE category=? OR level=?"
+        cur = con.cursor()
+        cur.execute(query, (category, category,))
+        word_list = cur.fetchall()
+        con.close()
+        return render_template("edit_delete_word.html", word_list=word_list)
+    return redirect('/admin')
+
+@app.route('/delete_word', methods=['POST'])
+def render_delete_word():
+    if not is_logged_in():
+        return redirect('/?message=Need+to+be+logged+in')
+    if request.method == "POST":
+        print(request.form)
+        word = request.form.get('word')
+        print(word)
+        word = word.split(', ')
+        word_id = word[0]
+        word_name = word[1]+'/'+word[2]
+        return render_template("delete_confirm.html", sub_id=word_id, name=word_name, type = "word")
+    return redirect('/admin')
 
 
 app.run(host='0.0.0.0', debug=True)
