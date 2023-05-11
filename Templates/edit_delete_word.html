@@ -20,4 +20,57 @@
         <div class="form-element"><input type="submit" value="Delete Word"></div>
     </div>
 </form>
+<h4>Edit a Word</h4>
+<form class="myform" method="post" action="/edit_word">
+    <div class="form-group">
+        <div class="form-label"><label for="name">Word:</label> </div>
+        <div class="form-element">
+            <select id="e_word" name="word">
+                {% for i in word_list %}
+                <option value="{{ i[5] }}, {{ i[0] }}, {{ i[1] }}"> {{ i[0] }}/{{ i[1] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="form-label"><label for="name">Edited Maori Translation:</label> </div>
+        <div class="form-element"><input type="text" name="m_trans" id="m_trans" required></div>
+    </div>
+    <div class="form-group">
+        <div class="form-label"><label for="name">Edited English Translation:</label> </div>
+        <div class="form-element"><input type="text" name="e_trans" id="e_trans" required></div>
+    </div>
+    <div class="form-group">
+        <div class="form-label"><label for="name">Edited English Definition:</label> </div>
+        <div class="form-element"><input type="text" name="word_def" id="word_def" required></div>
+    </div>
+    <div class="form-group">
+        <div class="form-label"><label for="name">Edited Category:</label> </div>
+        <div class="form-element">
+            <select id="w_cat" name="w_cat">
+                {% for i in categories %}
+                {% if i[2] == 'C' %}
+                <option value="{{ i[0] }}"> {{ i[1] }}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="form-label"><label for="name">Edited Level:</label> </div>
+        <div class="form-element">
+            <select id="w_lev" name="w_lev">
+                {% for i in categories %}
+                {% if i[2] == 'L' %}
+                <option value="{{ i[0] }}"> {{ i[1] }}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="form-label"></div>
+        <div class="form-element"><input type="submit" value="Edit Word"></div>
+    </div>
+</form>
 {% endblock %}

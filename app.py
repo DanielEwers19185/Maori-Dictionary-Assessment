@@ -194,7 +194,7 @@ def render_delete_category():
     return redirect('/admin')
 
 @app.route('/delete_confirm/<sub_id>/<type>')
-def delete_category_confirm(sub_id, type):
+def delete_confirm(sub_id, type):
     if not is_logged_in():
         return redirect('/?message=Need+to+be+logged+in')
     con = create_connection(DATABASE)
@@ -239,8 +239,12 @@ def edit_delete_word():
         cur = con.cursor()
         cur.execute(query, (category, category,))
         word_list = cur.fetchall()
+        query = 'SELECT id, title, type FROM categories'
+        cur = con.cursor()
+        cur.execute(query)
+        category_list = cur.fetchall()
         con.close()
-        return render_template("edit_delete_word.html", word_list=word_list)
+        return render_template("edit_delete_word.html", word_list=word_list, categories=category_list)
     return redirect('/admin')
 
 @app.route('/delete_word', methods=['POST'])
@@ -257,5 +261,40 @@ def render_delete_word():
         return render_template("delete_confirm.html", sub_id=word_id, name=word_name, type = "word")
     return redirect('/admin')
 
+
+@app.route('/edit_word', methods=['POST'])
+def render_edit_word():
+    if not is_logged_in():
+        return redirect('/?message=Need+to+be+logged+in')
+    if request.method == "POST":
+        m_tans = request.form.get('m_trans').lower().strip()
+        e_trans = request.form.get('e_trans').lower().strip()
+        word_def = request.form.get('word_def').lower().strip()
+        w_cat = request.form.get('w_cat')
+        w_lev = request.form.get('w_lev')
+        print(request.form)
+        word = request.form.get('word')
+        print(word)
+        word = word.split(', ')
+        word_id = word[0]
+        word_name = word[1]+'/'+word[2]
+        return render_template("edit_confirm.html", sub_id=word_id, name=word_name, e_trans=e_trans, w_cat=w_cat, word_def=word_def, w_lev=w_lev, m_tans=m_tans)
+    return redirect('/admin')
+
+@app.route('/edit_confirm/<sub_id>/<e_trans>+<w_cat>+<word_def>+<w_lev>+<m_trans>')
+def edit_confirm(sub_id, e_trans, w_cat, word_def, w_lev, m_tans):
+    if not is_logged_in():
+        return redirect('/?message=Need+to+be+logged+in')
+    con = create_connection(DATABASE)
+    query = "DELETE FROM words WHERE id = ?"
+    cur = con.cursor()
+    cur.execute(query, (sub_id, ))
+    con.commit()
+    query = "INSERT INTO words  ('eng_word', 'category', 'definition', 'level', 'mri_word', 'id') VALUES (?, ?, ?, ?, ?, ?)"
+    cur = con.cursor()
+    cur.execute(query, (e_trans, w_cat, word_def, w_lev, m_tans, sub_id,))
+    con.commit()
+    con.close()
+    return redirect('/admin')
 
 app.run(host='0.0.0.0', debug=True)

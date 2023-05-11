@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block pageheading %}Confirm Edit{% endblock %}
+
+{% block main %}
+  <h3>Are you happy to proceed?
+    <a href="/edit_confirm/{{ sub_id }}/{{ e_trans }}+{{ w_cat }}+{{ word_def }}+{{ w_lev }}+{{ m_trans }}">Yes</a>
+    <a>/</a>
+    <a href="/admin">No</a>
+  </h3>
+{% endblock %}
