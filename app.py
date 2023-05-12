@@ -57,13 +57,16 @@ def render_dictionary_page(cat_id):
         word_list[i] = word_list[i] + (cur.fetchall()[0])
         cur.execute(query, (word_list[i][4], ))
         word_list[i] = word_list[i] + (cur.fetchall()[0])
+    query = "SELECT title, description FROM categories WHERE id =? "
+    cur.execute(query, (cat_id,))
+    cat_info=cur.fetchall()
     con.close()
     print(cat_id)
     print(word_list)
     # first_name = ""
     # if is_logged_in () :
     #    first_name = session['fname']
-    return render_template('dictionary.html', cat_list=render_cat_lev_menus('C'), lev_list=render_cat_lev_menus('L'), word_list=word_list, logged_in=is_logged_in())
+    return render_template('dictionary.html', cat_list=render_cat_lev_menus('C'), lev_list=render_cat_lev_menus('L'), word_list=word_list, logged_in=is_logged_in(), cat_info=cat_info)
 
 
 @app.route('/contact')
@@ -190,7 +193,7 @@ def render_delete_category():
         category = category.split(', ')
         cat_id = category[0]
         cat_name = category[1]
-        return render_template("delete_confirm.html", sub_id=cat_id, name=cat_name, type = "cat")
+        return render_template("delete_confirm.html", sub_id=cat_id, name=cat_name, type = "cat",logged_in=is_logged_in())
     return redirect('/admin')
 
 @app.route('/delete_confirm/<sub_id>/<type>')
@@ -244,7 +247,7 @@ def edit_delete_word():
         cur.execute(query)
         category_list = cur.fetchall()
         con.close()
-        return render_template("edit_delete_word.html", word_list=word_list, categories=category_list)
+        return render_template("edit_delete_word.html", word_list=word_list, categories=category_list, logged_in=is_logged_in())
     return redirect('/admin')
 
 @app.route('/delete_word', methods=['POST'])
@@ -267,7 +270,7 @@ def render_edit_word():
     if not is_logged_in():
         return redirect('/?message=Need+to+be+logged+in')
     if request.method == "POST":
-        m_tans = request.form.get('m_trans').lower().strip()
+        m_trans = request.form.get('m_trans').lower().strip()
         e_trans = request.form.get('e_trans').lower().strip()
         word_def = request.form.get('word_def').lower().strip()
         w_cat = request.form.get('w_cat')
@@ -278,11 +281,11 @@ def render_edit_word():
         word = word.split(', ')
         word_id = word[0]
         word_name = word[1]+'/'+word[2]
-        return render_template("edit_confirm.html", sub_id=word_id, name=word_name, e_trans=e_trans, w_cat=w_cat, word_def=word_def, w_lev=w_lev, m_tans=m_tans)
+        return render_template("edit_confirm.html", sub_id=word_id, e_trans=e_trans, w_cat=w_cat, word_def=word_def, w_lev=w_lev, m_trans=m_trans)
     return redirect('/admin')
 
 @app.route('/edit_confirm/<sub_id>/<e_trans>+<w_cat>+<word_def>+<w_lev>+<m_trans>')
-def edit_confirm(sub_id, e_trans, w_cat, word_def, w_lev, m_tans):
+def edit_confirm(sub_id, e_trans, w_cat, word_def, w_lev, m_trans):
     if not is_logged_in():
         return redirect('/?message=Need+to+be+logged+in')
     con = create_connection(DATABASE)
@@ -292,9 +295,10 @@ def edit_confirm(sub_id, e_trans, w_cat, word_def, w_lev, m_tans):
     con.commit()
     query = "INSERT INTO words  ('eng_word', 'category', 'definition', 'level', 'mri_word', 'id') VALUES (?, ?, ?, ?, ?, ?)"
     cur = con.cursor()
-    cur.execute(query, (e_trans, w_cat, word_def, w_lev, m_tans, sub_id,))
+    cur.execute(query, (e_trans, w_cat, word_def, w_lev, m_trans, sub_id,))
     con.commit()
     con.close()
     return redirect('/admin')
+
 
 app.run(host='0.0.0.0', debug=True)

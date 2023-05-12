@@ -4,6 +4,10 @@
 Dictionary
 {% endblock %}
 {% block main %}
+<div class = title>
+    <h1>{{ cat_info[1] }}</h1>
+    <h2>{{ cat_info[2] }}</h2>
+</div>
     <div class ="words">
         {% for word in word_list %}
         <div class="word-box">
