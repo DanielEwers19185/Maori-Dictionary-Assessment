@@ -47,22 +47,28 @@ def render_dictionary_page(cat_id):
     cat_id = cat_id.strip("<")
     cat_id = cat_id.strip(">")
     con = create_connection(DATABASE)
-    query = "SELECT mri_word, eng_word, definition, category, level FROM words WHERE category =? OR level = ?"
     cur = con.cursor()
-    cur.execute(query, (cat_id, cat_id,))
-    word_list = cur.fetchall()
+    if cat_id == "":
+        query = "SELECT mri_word, eng_word, definition, category, level FROM words"
+        cur.execute(query, )
+        word_list = cur.fetchall()
+        cat_info = [("All Categories", "The whole undivided dictionary",)]
+    else:
+        query = "SELECT mri_word, eng_word, definition, category, level FROM words WHERE category =? OR level = ?"
+        cur.execute(query, (cat_id, cat_id,))
+        word_list = cur.fetchall()
+        query = "SELECT title, description FROM categories WHERE id =? "
+        cur.execute(query, (cat_id,))
+        cat_info = cur.fetchall()
     for i in range(len(word_list)):
         query = "SELECT title FROM categories WHERE id =? "
         cur.execute(query, (word_list[i][3], ))
         word_list[i] = word_list[i] + (cur.fetchall()[0])
         cur.execute(query, (word_list[i][4], ))
         word_list[i] = word_list[i] + (cur.fetchall()[0])
-    query = "SELECT title, description FROM categories WHERE id =? "
-    cur.execute(query, (cat_id,))
-    cat_info=cur.fetchall()
     con.close()
-    print(cat_id)
     print(word_list)
+    print(cat_info)
     # first_name = ""
     # if is_logged_in () :
     #    first_name = session['fname']
