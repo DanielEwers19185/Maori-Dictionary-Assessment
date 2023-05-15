@@ -4,7 +4,11 @@
 
 {% block main %}
   <h3>Are you happy to proceed?
+    {% if sub_type == 'word' %}
     <a href="/edit_confirm/{{ sub_id }}/{{ e_trans }}+{{ w_cat }}+{{ word_def }}+{{ w_lev }}+{{ m_trans }}">Yes</a>
+    {% elif sub_type == 'cat' %}
+    <a href="/edit_confirm/{{ sub_id }}/{{ e_title }}+{{ cat_def }}+{{ cat_lev }}">Yes</a>
+    {% endif %}
     <a>/</a>
     <a href="/admin">No</a>
   </h3>

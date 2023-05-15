@@ -365,7 +365,7 @@ def render_edit_word():
         word = word.split(', ')
         word_id = word[0]
         word_name = word[1]+'/'+word[2]
-        return render_template("edit_confirm.html", sub_id=word_id, e_trans=e_trans, w_cat=w_cat, word_def=word_def, w_lev=w_lev, m_trans=m_trans)
+        return render_template("edit_confirm.html", sub_id=word_id, e_trans=e_trans, w_cat=w_cat, word_def=word_def, w_lev=w_lev, m_trans=m_trans, sub_type="word")
     return redirect('/admin')
 
 @app.route('/edit_confirm/<sub_id>/<e_trans>+<w_cat>+<word_def>+<w_lev>+<m_trans>')
@@ -388,5 +388,39 @@ def edit_confirm(sub_id, e_trans, w_cat, word_def, w_lev, m_trans):
 
     return redirect('/admin')
 
+@app.route('/edit_category', methods=['POST'])
+def render_edit_category():
+    if not is_logged_in()[0]:
+        return redirect('/?message=Need+to+be+logged+in')
+    if is_logged_in()[1] != "admin":
+        return redirect('/?message=Need+Admin+permissions')
+    if request.method == "POST":
+        print(request.form)
+        e_cat = request.form.get('edited_category')
+        e_title = request.form.get('cat_title').title().strip()
+        cat_def = request.form.get('cat_def').title().strip()
+        cat_lev = request.form.get('edited_cat_lev')
+        return render_template("edit_confirm.html", sub_id=e_cat, e_title=e_title, cat_def=cat_def, cat_lev=cat_lev, sub_type="cat")
+    return redirect('/admin')
+
+@app.route('/edit_confirm/<sub_id>/<e_title>+<cat_def>+<cat_lev>')
+def edit_confirm_cat(sub_id, e_title, cat_def, cat_lev):
+    if not is_logged_in()[0]:
+        return redirect('/?message=Need+to+be+logged+in')
+    if is_logged_in()[1] != "admin":
+        return redirect('/?message=Need+Admin+permissions')
+    con = create_connection(DATABASE)
+    cur = con.cursor()
+    query = "UPDATE categories SET title = ?, description = ?, type = ? WHERE id = ?"
+    cur = con.cursor()
+    cur.execute(query, (e_title, cat_def, cat_lev, sub_id ))
+    con.commit()
+    con.close()
+    edited_id = sub_id
+    edited_type = "Lev_Cat"
+    edit = "Edited"
+    log_edit(edited_id, edited_type, edit)
+
+    return redirect('/admin')
 
 app.run(host='0.0.0.0', debug=True)
