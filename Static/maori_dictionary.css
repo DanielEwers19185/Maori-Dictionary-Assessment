@@ -98,11 +98,11 @@ a, a:visited {
     margin-bottom: 0.5rem;
 }
 
-.word-box-heading {
+.word-box-mword {
     padding: 0.5rem;
 }
 
-.word-box-subheading{
+.word-box-eword{
     padding: 0.5rem;
 }
 
@@ -111,7 +111,7 @@ a, a:visited {
     overflow: hidden;
 }
 
-.word-box-info {
+.word-box-description {
     padding: 0.5rem;
 
 }

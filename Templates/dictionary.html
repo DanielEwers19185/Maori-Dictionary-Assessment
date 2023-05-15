@@ -11,17 +11,19 @@ Dictionary
     <div class ="words">
         {% for word in word_list %}
         <div class="word-box">
-            <div class = "word-box-heading">
+            <div class = "word-box-mword">
                 <h3>{{ word[0] }}</h3>
                 <h3>{{ word[1] }}</h3>
             </div>
-            <div class= 'word-box-subheading'>
+            <div class= 'word-box-eword'>
                 <h4>{{ word[2] }}</h4>
             </div>
-
-            <div class="word-box-info">
-                <p> {{ word[5] }} </p>
+            <div class = word-box-image>
+                <img src="/static/images/{{ word[5] }}" onerror="this.onerror=null;this.src='/static/images/noimage.png';">
+            </div>
+            <div class="word-box-description">
                 <p> {{ word[6] }} </p>
+                <p> {{ word[7] }} </p>
             </div>
         </div>
         {% endfor %}

@@ -8,6 +8,7 @@ DATABASE = 'C:/Users/School/OneDrive - Wellington College/13DTS/Maori Dictionary
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 app.secret_key = "peepeepoopoobumbum"
+app.config['UPLOAD_FOLDER'] = 'C:/Users/School/OneDrive - Wellington College/13DTS/Maori Dictionary Assessment/Static/images'
 
 def create_connection(db_file: object) -> object:
     try:
@@ -49,12 +50,12 @@ def render_dictionary_page(cat_id):
     con = create_connection(DATABASE)
     cur = con.cursor()
     if cat_id == "":
-        query = "SELECT mri_word, eng_word, definition, category, level FROM words"
+        query = "SELECT mri_word, eng_word, definition, category, level, image FROM words"
         cur.execute(query, )
         word_list = cur.fetchall()
         cat_info = [("All Categories", "The whole undivided dictionary",)]
     else:
-        query = "SELECT mri_word, eng_word, definition, category, level FROM words WHERE category =? OR level = ?"
+        query = "SELECT mri_word, eng_word, definition, category, level, image FROM words WHERE category =? OR level = ?"
         cur.execute(query, (cat_id, cat_id,))
         word_list = cur.fetchall()
         query = "SELECT title, description FROM categories WHERE id =? "
@@ -217,7 +218,7 @@ def delete_confirm(sub_id, type):
     con.close()
     return redirect('/admin')
 
-@app.route('/add_word', methods=['POST'])
+@app.route('/add_word', methods=['GET', 'POST'])
 def add_word():
     if not is_logged_in():
         return redirect('/?message=Need+to+be+logged+in')
@@ -228,12 +229,17 @@ def add_word():
         word_def = request.form.get('word_def').lower().strip()
         w_cat = request.form.get('w_cat')
         w_lev = request.form.get('w_lev')
+        word_img = request.form.get('word_img')
         con = create_connection(DATABASE)
-        query = "INSERT INTO words  ('eng_word', 'category', 'definition', 'level', 'mri_word') VALUES (?, ?, ?, ?, ?)"
+        query = "INSERT INTO words  ('eng_word', 'category', 'definition', 'level', 'mri_word', 'image') VALUES (?, ?, ?, ?, ?, ?)"
         cur = con.cursor()
-        cur.execute(query, (e_trans, w_cat, word_def, w_lev, m_tans,))
+        cur.execute(query, (e_trans, w_cat, word_def, w_lev, m_tans, word_img,))
         con.commit()
         con.close()
+        if word_img != '':
+            file = request.files['word_img']
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         return redirect('/admin')
 
 @app.route('/edit_delete_word', methods=['POST'])
@@ -295,15 +301,13 @@ def edit_confirm(sub_id, e_trans, w_cat, word_def, w_lev, m_trans):
     if not is_logged_in():
         return redirect('/?message=Need+to+be+logged+in')
     con = create_connection(DATABASE)
-    query = "DELETE FROM words WHERE id = ?"
     cur = con.cursor()
-    cur.execute(query, (sub_id, ))
-    con.commit()
-    query = "INSERT INTO words  ('eng_word', 'category', 'definition', 'level', 'mri_word', 'id') VALUES (?, ?, ?, ?, ?, ?)"
+    query = "UPDATE words SET eng_word = ?, category = ?, definition = ?, level = ?, mri_word = ? WHERE id = ?"
     cur = con.cursor()
-    cur.execute(query, (e_trans, w_cat, word_def, w_lev, m_trans, sub_id,))
+    cur.execute(query, (e_trans, w_cat, word_def, w_lev, m_trans, sub_id ))
     con.commit()
     con.close()
+
     return redirect('/admin')
 
 
