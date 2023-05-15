@@ -420,7 +420,30 @@ def edit_confirm_cat(sub_id, e_title, cat_def, cat_lev):
     edited_type = "Lev_Cat"
     edit = "Edited"
     log_edit(edited_id, edited_type, edit)
-
     return redirect('/admin')
+
+@app.route('/word_page/<word_id>')
+def render_word_page(word_id):
+    con = create_connection(DATABASE)
+    cur = con.cursor()
+    query = "SELECT mri_word, eng_word, definition, category, level, image, id FROM words WHERE category =? OR level = ?"
+    cur.execute(query, (cat_id, cat_id,))
+    word_list = cur.fetchall()
+    query = "SELECT title, description FROM categories WHERE id =? "
+    cur.execute(query, (word_list[0][3],))
+    cat_info = cur.fetchall()[0]
+    cur.execute(query, (word_list[0][4],))
+    lev_info = cur.fetchall()[0]
+    if not is_logged_in()[0]:
+        if is_logged_in()[1] != "admin":
+            query = "SELECT edited_id, edited_type, edit, editor_id, date_time, editor_name, edited_title FROM edit_log WHERE edited_id=? or edited_id=? or edited_id=?"
+            cur.execute(query, (word_id, word_list[0][3], word_list[0][4]))
+            edit_list = cur.fetchall()
+        else:
+            edit_list = []
+    else:
+        edit_list = []
+    con.close()
+    return render_template('word_page.html', cat_list=render_cat_lev_menus('C'), lev_list=render_cat_lev_menus('L'), logged_in=is_logged_in()[0], perms=is_logged_in()[1], word_list=word_list, cat_info=cat_info, lev_info=lev_info, edit_list = edit_list)
 
 app.run(host='0.0.0.0', debug=True)
