@@ -284,3 +284,11 @@ h3,h4{
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
 .dropdown-lev:hover .dropbtn-lev {background-color: #3e8e41;}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+th{
+    width: 14%;
+}

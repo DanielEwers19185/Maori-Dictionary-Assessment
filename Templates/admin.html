@@ -35,7 +35,7 @@
         <div class="form-element">
             <select id="cat_id" name="cat_id">
                 {% for i in categories %}
-                <option value="{{ i[0] }}, {{ i[1] }}"> {{ i[1] }}</option>
+                <option value="{{ i[0] }}, {{ i[1] }}, {{ i[2] }}"> {{ i[1] }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -111,4 +111,26 @@
     </div>
 </form>
 <h3>EDIT LOG</h3>
+<table>
+    <tr>
+        <th>Subject ID</th>
+        <th>Subject Type</th>
+        <th>Subject</th>
+        <th>Edit Made</th>
+        <th>Editor ID</th>
+        <th>Editor Name</th>
+        <th>Time And Date Of Edit</th>
+    </tr>
+    {% for edit in edit_list %}
+    <tr>
+        <td>{{ edit[0] }}</td>
+        <td>{{ edit[1] }}</td>
+        <td>{{ edit[6] }}</td>
+        <td>{{ edit[2] }}</td>
+        <td>{{ edit[3] }}</td>
+        <td>{{ edit[5] }}</td>
+        <td>{{ edit[4] }}</td>
+    </tr>
+    {% endfor %}
+</table>
 {% endblock %}

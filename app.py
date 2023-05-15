@@ -43,9 +43,19 @@ def log_edit(edited_id, edited_type, edit):
     user = session.get('user_id')
     time = datetime.now()
     con = create_connection(DATABASE)
-    query = "INSERT INTO edit_log ('edited_id', 'edited_type', 'edit', 'editor', 'date_time') VALUES (?, ?, ?, ?, ?)"
+    query = "SELECT fname FROM user WHERE id =? "
     cur = con.cursor()
-    cur.execute(query, (edited_id, edited_type, edit, user, time,))
+    cur.execute(query, (session.get('user_id'),))
+    editor_name = cur.fetchall()[0][0]
+    if edited_type == "Lev_Cat":
+        query = "SELECT title FROM categories WHERE id =? "
+        cur.execute(query, (edited_id,))
+    else:
+        query = "SELECT eng_word FROM words WHERE id =? "
+        cur.execute(query, (edited_id,))
+    edited_title = cur.fetchall()[0][0]
+    query = "INSERT INTO edit_log ('edited_id', 'edited_type', 'edit', 'editor_id', 'date_time', 'editor_name', 'edited_title') VALUES (?, ?, ?, ?, ?, ?, ?)"
+    cur.execute(query, (edited_id, edited_type, edit, user, time, editor_name, edited_title,))
     con.commit()
     con.close()
 
@@ -186,8 +196,11 @@ def render_admin():
     cur = con.cursor()
     cur.execute(query)
     category_list = cur.fetchall()
+    query = "SELECT edited_id, edited_type, edit, editor_id, date_time, editor_name, edited_title FROM edit_log"
+    cur.execute(query, )
+    edit_list = cur.fetchall()
     con.close()
-    return render_template("admin.html", cat_list=render_cat_lev_menus('C'), lev_list=render_cat_lev_menus('L'), logged_in=is_logged_in()[0], categories=category_list, word_list=word_list, perms = is_logged_in()[1])
+    return render_template("admin.html", cat_list=render_cat_lev_menus('C'), lev_list=render_cat_lev_menus('L'), logged_in=is_logged_in()[0], categories=category_list, word_list=word_list, perms = is_logged_in()[1], edit_list=edit_list)
 
 @app.route('/add_category', methods=['POST'])
 def add_category():
@@ -227,7 +240,8 @@ def render_delete_category():
         category = category.split(', ')
         cat_id = category[0]
         cat_name = category[1]
-        return render_template("delete_confirm.html", sub_id=cat_id, name=cat_name, type = "cat",logged_in=is_logged_in()[0], perms = is_logged_in()[1])
+        cat_type = category[2]
+        return render_template("delete_confirm.html", sub_id=cat_id, name=cat_name, type=cat_type, logged_in=is_logged_in()[0], perms = is_logged_in()[1])
     return redirect('/admin')
 
 @app.route('/delete_confirm/<sub_id>/<type>')
@@ -236,20 +250,30 @@ def delete_confirm(sub_id, type):
         return redirect('/?message=Need+to+be+logged+in')
     if is_logged_in()[1] != "admin":
         return redirect('/?message=Need+Admin+permissions')
-    con = create_connection(DATABASE)
-    if type == "cat":
-        query = "DELETE FROM categories WHERE id = ?"
-        edited_type = "Lev_Cat"
-    elif type == "word":
-        query = "DELETE FROM words WHERE id = ?"
-        edited_type = "Word"
-    cur = con.cursor()
-    cur.execute(query, (sub_id, ))
-    con.commit()
-    con.close()
     edited_id = sub_id
     edit = "Deleted"
-    log_edit(edited_id, edited_type, edit)
+    con = create_connection(DATABASE)
+    cur = con.cursor()
+    if type == "C" or type == "L":
+        edited_type = "Lev_Cat"
+        log_edit(edited_id, edited_type, edit)
+        query = "DELETE FROM categories WHERE id = ?"
+        cur.execute(query, (sub_id,))
+        con.commit()
+        query = "SELECT id FROM words WHERE category = ? OR level = ?"
+        cur.execute(query, (sub_id, sub_id,))
+        word_list = cur.fetchall()
+        for i in range(len(word_list)):
+            query = "DELETE FROM words WHERE id = ?"
+            cur.execute(query, ( word_list[i] ))
+            con.commit()
+    elif type == "word":
+        edited_type = "Word"
+        log_edit(edited_id, edited_type, edit)
+        query = "DELETE FROM words WHERE id = ?"
+        cur.execute(query, (sub_id, ))
+        con.commit()
+    con.close()
     return redirect('/admin')
 
 @app.route('/add_word', methods=['GET', 'POST'])
@@ -319,7 +343,7 @@ def render_delete_word():
         word = word.split(', ')
         word_id = word[0]
         word_name = word[1]+'/'+word[2]
-        return render_template("delete_confirm.html", sub_id=word_id, name=word_name, type = "word")
+        return render_template("delete_confirm.html", sub_id=word_id, name=word_name, type="word")
     return redirect('/admin')
 
 

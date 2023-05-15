@@ -7,5 +7,8 @@
     <a href="/delete_confirm/{{ sub_id }}/{{ type }}">Yes</a>
     <a>/</a>
     <a href="/admin">No</a>
+    {% if type == 'C' or type == 'L' %}
+    <p><strong>THIS WILL DELETE ALL WORDS IN THE CATEGORY/LEVEL</strong></p>
+    {% endif %}
   </h3>
 {% endblock %}
