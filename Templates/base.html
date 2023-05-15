@@ -17,7 +17,8 @@
         <div class="navbar-links">
             {% if logged_in %}
             <a href="/logout">logout</a>
-            <a href="/admin">admin</a>
+            {% if perms == 'admin' %}<a href="/admin">admin</a>{% endif %}
+
             {% else %}
             <a href="/login">login </a>
             <a href="/signup">Signup</a>

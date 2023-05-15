@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, request, session
 import sqlite3
 from sqlite3 import Error
 from flask_bcrypt import Bcrypt
+from datetime import datetime
 
 DATABASE = 'C:/Users/School/OneDrive - Wellington College/13DTS/Maori Dictionary Assessment/Templates/smile.db'
 
@@ -22,12 +23,13 @@ def create_connection(db_file: object) -> object:
 
 def is_logged_in():
     if session.get("email") is None:
-       print("Not logged in")
-       return False
+        print("Not logged in")
+        perms = ""
+        return False, perms
     else:
-       print("Logged in")
-       return True
-
+        print("Logged in")
+        perms = session.get('user_perms')
+        return True, perms
 def render_cat_lev_menus(catlev):
     con = create_connection(DATABASE)
     query = "SELECT id, title FROM categories WHERE type=?"
@@ -37,10 +39,19 @@ def render_cat_lev_menus(catlev):
     con.close()
     return cat_list
 
+def log_edit(edited_id, edited_type, edit):
+    user = session.get('user_id')
+    time = datetime.now()
+    con = create_connection(DATABASE)
+    query = "INSERT INTO edit_log ('edited_id', 'edited_type', 'edit', 'editor', 'date_time') VALUES (?, ?, ?, ?, ?)"
+    cur = con.cursor()
+    cur.execute(query, (edited_id, edited_type, edit, user, time,))
+    con.commit()
+    con.close()
+
 @app.route('/')
 def render_homepage():
-
-    return render_template('home.html', cat_list=render_cat_lev_menus('C'), lev_list=render_cat_lev_menus('L'), logged_in=is_logged_in())
+    return render_template('home.html', cat_list=render_cat_lev_menus('C'), lev_list=render_cat_lev_menus('L'), logged_in=is_logged_in()[0], perms = is_logged_in()[1])
 
 
 @app.route('/dictionary/<cat_id>')
@@ -73,22 +84,18 @@ def render_dictionary_page(cat_id):
     # first_name = ""
     # if is_logged_in () :
     #    first_name = session['fname']
-    return render_template('dictionary.html', cat_list=render_cat_lev_menus('C'), lev_list=render_cat_lev_menus('L'), word_list=word_list, logged_in=is_logged_in(), cat_info=cat_info)
+    return render_template('dictionary.html', cat_list=render_cat_lev_menus('C'), lev_list=render_cat_lev_menus('L'), word_list=word_list, logged_in=is_logged_in()[0], cat_info=cat_info, perms = is_logged_in()[1])
 
-
-@app.route('/contact')
-def render_content_page():
-    return render_template('contact.html', cat_list=render_cat_lev_menus(), lev_list=render_cat_lev_menus('L'), logged_in=is_logged_in())
 
 @app.route('/login', methods=['POST', 'GET'])
 def render_login():
-    if is_logged_in():
+    if is_logged_in()[0]:
         return redirect('/dictionary/1')
     print('logging in')
     if request.method == 'POST':
         email = request.form['email'].strip().lower()
         password = request.form['password'].strip()
-        query = """SELECT id, fname, password FROM user WHERE email = ?"""
+        query = """SELECT id, fname, password, permissions FROM user WHERE email = ?"""
         con = create_connection(DATABASE)
         cur = con.cursor()
         cur.execute(query, (email, ))
@@ -101,6 +108,7 @@ def render_login():
             user_id = user_data[0][0]
             first_name = user_data[0][1]
             db_password = user_data[0][2]
+            user_perms = user_data[0][3]
         except IndexError:
             return redirect('/login?error=Emial+invalid+or+password+incorrect')
 
@@ -110,9 +118,11 @@ def render_login():
         session['email'] = email
         session['user_id'] = user_id
         session['first_name'] = first_name
+        session['user_perms'] = user_perms
+        print(user_perms)
 
         return redirect('/')
-    return render_template('login.html', cat_list=render_cat_lev_menus('C'), lev_list=render_cat_lev_menus('L'), logged_in=is_logged_in())
+    return render_template('login.html', cat_list=render_cat_lev_menus('C'), lev_list=render_cat_lev_menus('L'), logged_in=is_logged_in()[0], perms = is_logged_in()[1])
 
 @app.route('/logout')
 def logout():
@@ -123,28 +133,33 @@ def logout():
 
 @app.route('/signup', methods=['POST', 'GET'])
 def render_signup():
-    if is_logged_in():
+    if is_logged_in()[0]:
         return redirect('/dictionary/1?message=Already+logged+in')
     if request.method == 'POST':
         print(request.form)
         fname = request.form.get('fname').title().strip()
         lname = request.form.get('lname').title().strip()
         email = request.form.get('email').lower().strip()
+        user_perms = request.form.get('user_permission')
         password = request.form.get('password')
         password2 = request.form.get('password2')
+        print(user_perms)
         if password != password2:
             return redirect("\signup?error=Passwords+Do+Not+Match")
         if len(password) < 8:
             return redirect("\signup?error=Password+Must+Be+At+Least+8+Characters")
-
         hashed_password = bcrypt.generate_password_hash(password)
 
-        con = create_connection(DATABASE)
-        query = "INSERT INTO user (fname, lname, email, password) VALUES (?, ?, ?, ?)"
-        cur = con.cursor()
+        if user_perms:
+            user_perms = "admin"
+        else:
+            user_perms = "general"
 
+        con = create_connection(DATABASE)
+        query = "INSERT INTO user (fname, lname, email, password, permissions) VALUES (?, ?, ?, ?, ?)"
+        cur = con.cursor()
         try:
-            cur.execute(query, (fname, lname, email, hashed_password))
+            cur.execute(query, (fname, lname, email, hashed_password, user_perms))
         except sqlite3.IntegrityError:
             con.close()
             return redirect('\signup?error=Email+is+already+used')
@@ -154,12 +169,14 @@ def render_signup():
 
         return redirect('\login')
 
-    return render_template('signup.html', cat_list=render_cat_lev_menus('C'), lev_list=render_cat_lev_menus('L'), logged_in=is_logged_in())
+    return render_template('signup.html', cat_list=render_cat_lev_menus('C'), lev_list=render_cat_lev_menus('L'), logged_in=is_logged_in()[0], perms = is_logged_in()[1])
 
 @app.route('/admin')
 def render_admin():
-    if not is_logged_in():
+    if not is_logged_in()[0]:
         return redirect('/?message=Need+to+be+logged+in')
+    if is_logged_in()[1] != "admin":
+        return redirect('/?message=Need+Admin+permissions')
     con = create_connection(DATABASE)
     query = "SELECT mri_word, eng_word, definition, category, level, id FROM words"
     cur = con.cursor()
@@ -170,12 +187,14 @@ def render_admin():
     cur.execute(query)
     category_list = cur.fetchall()
     con.close()
-    return render_template("admin.html", cat_list=render_cat_lev_menus('C'), lev_list=render_cat_lev_menus('L'), logged_in=is_logged_in(), categories=category_list, word_list=word_list)
+    return render_template("admin.html", cat_list=render_cat_lev_menus('C'), lev_list=render_cat_lev_menus('L'), logged_in=is_logged_in()[0], categories=category_list, word_list=word_list, perms = is_logged_in()[1])
 
 @app.route('/add_category', methods=['POST'])
 def add_category():
-    if not is_logged_in():
+    if not is_logged_in()[0]:
         return redirect('/?message=Need+to+be+logged+in')
+    if is_logged_in()[1] != "admin":
+        return redirect('/?message=Need+Admin+permissions')
     if request.method == "POST":
         print(request.form)
         cat_name = request.form.get('name').lower().strip()
@@ -187,41 +206,58 @@ def add_category():
         cur = con.cursor()
         cur.execute(query, (cat_name, cat_des, cat_type,))
         con.commit()
+        query = "SELECT MAX(id) FROM categories"
+        cur.execute(query, )
+        edited_id = cur.fetchall()[0][0]
         con.close()
+        edited_type = "Lev_Cat"
+        edit = "Added"
+        log_edit(edited_id, edited_type, edit)
         return redirect('/admin')
 
 @app.route('/delete_category', methods=['POST'])
 def render_delete_category():
-    if not is_logged_in():
+    if not is_logged_in()[0]:
         return redirect('/?message=Need+to+be+logged+in')
+    if is_logged_in()[1] != "admin":
+        return redirect('/?message=Need+Admin+permissions')
     if request.method == "POST":
         category = request.form.get('cat_id')
         print(category)
         category = category.split(', ')
         cat_id = category[0]
         cat_name = category[1]
-        return render_template("delete_confirm.html", sub_id=cat_id, name=cat_name, type = "cat",logged_in=is_logged_in())
+        return render_template("delete_confirm.html", sub_id=cat_id, name=cat_name, type = "cat",logged_in=is_logged_in()[0], perms = is_logged_in()[1])
     return redirect('/admin')
 
 @app.route('/delete_confirm/<sub_id>/<type>')
 def delete_confirm(sub_id, type):
-    if not is_logged_in():
+    if not is_logged_in()[0]:
         return redirect('/?message=Need+to+be+logged+in')
+    if is_logged_in()[1] != "admin":
+        return redirect('/?message=Need+Admin+permissions')
     con = create_connection(DATABASE)
     if type == "cat":
         query = "DELETE FROM categories WHERE id = ?"
+        edited_type = "Lev_Cat"
     elif type == "word":
         query = "DELETE FROM words WHERE id = ?"
+        edited_type = "Word"
     cur = con.cursor()
     cur.execute(query, (sub_id, ))
     con.commit()
     con.close()
+    edited_id = sub_id
+    edit = "Deleted"
+    log_edit(edited_id, edited_type, edit)
     return redirect('/admin')
 
 @app.route('/add_word', methods=['GET', 'POST'])
 def add_word():
-    if not is_logged_in():
+    if not is_logged_in()[0]:
         return redirect('/?message=Need+to+be+logged+in')
+    if is_logged_in()[1] != "admin":
+        return redirect('/?message=Need+Admin+permissions')
     if request.method == "POST":
         print(request.form)
         m_tans = request.form.get('m_trans').lower().strip()
@@ -235,17 +271,25 @@ def add_word():
         cur = con.cursor()
         cur.execute(query, (e_trans, w_cat, word_def, w_lev, m_tans, word_img,))
         con.commit()
+        query = "SELECT MAX(id) FROM words"
+        cur.execute(query, )
+        edited_id = cur.fetchall()[0][0]
         con.close()
-        if word_img != '':
-            file = request.files['word_img']
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        edited_type = "Word"
+        edit = "Added"
+        log_edit(edited_id, edited_type, edit)
+        #if word_img != '':
+        #    file = request.files['word_img']
+        #    filename = secure_filename(file.filename)
+        #    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         return redirect('/admin')
 
 @app.route('/edit_delete_word', methods=['POST'])
 def edit_delete_word():
-    if not is_logged_in():
+    if not is_logged_in()[0]:
         return redirect('/?message=Need+to+be+logged+in')
+    if is_logged_in()[1] != "admin":
+        return redirect('/?message=Need+Admin+permissions')
     if request.method == "POST":
         print(request.form)
         category = request.form.get('e_d_word_cat')
@@ -259,13 +303,15 @@ def edit_delete_word():
         cur.execute(query)
         category_list = cur.fetchall()
         con.close()
-        return render_template("edit_delete_word.html", word_list=word_list, categories=category_list, logged_in=is_logged_in())
+        return render_template("edit_delete_word.html", word_list=word_list, categories=category_list, logged_in=is_logged_in()[0], perms = is_logged_in()[1])
     return redirect('/admin')
 
 @app.route('/delete_word', methods=['POST'])
 def render_delete_word():
-    if not is_logged_in():
+    if not is_logged_in()[0]:
         return redirect('/?message=Need+to+be+logged+in')
+    if is_logged_in()[1] != "admin":
+        return redirect('/?message=Need+Admin+permissions')
     if request.method == "POST":
         print(request.form)
         word = request.form.get('word')
@@ -279,8 +325,10 @@ def render_delete_word():
 
 @app.route('/edit_word', methods=['POST'])
 def render_edit_word():
-    if not is_logged_in():
+    if not is_logged_in()[0]:
         return redirect('/?message=Need+to+be+logged+in')
+    if is_logged_in()[1] != "admin":
+        return redirect('/?message=Need+Admin+permissions')
     if request.method == "POST":
         m_trans = request.form.get('m_trans').lower().strip()
         e_trans = request.form.get('e_trans').lower().strip()
@@ -298,8 +346,10 @@ def render_edit_word():
 
 @app.route('/edit_confirm/<sub_id>/<e_trans>+<w_cat>+<word_def>+<w_lev>+<m_trans>')
 def edit_confirm(sub_id, e_trans, w_cat, word_def, w_lev, m_trans):
-    if not is_logged_in():
+    if not is_logged_in()[0]:
         return redirect('/?message=Need+to+be+logged+in')
+    if is_logged_in()[1] != "admin":
+        return redirect('/?message=Need+Admin+permissions')
     con = create_connection(DATABASE)
     cur = con.cursor()
     query = "UPDATE words SET eng_word = ?, category = ?, definition = ?, level = ?, mri_word = ? WHERE id = ?"
@@ -307,6 +357,10 @@ def edit_confirm(sub_id, e_trans, w_cat, word_def, w_lev, m_trans):
     cur.execute(query, (e_trans, w_cat, word_def, w_lev, m_trans, sub_id ))
     con.commit()
     con.close()
+    edited_id = sub_id
+    edited_type = "Word"
+    edit = "Edited"
+    log_edit(edited_id, edited_type, edit)
 
     return redirect('/admin')
 
