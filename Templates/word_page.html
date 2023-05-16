@@ -1,7 +1,51 @@
 {% extends "base.html" %}
 
-{% block pageheading %}{% endblock %}
+{% block pageheading %} {{ word_list[0][0] }}/{{ word_list[0][1] }} {% endblock %}
 
 {% block main %}
-
+<div class = word-page>
+    <h2><strong> Word Info </strong></h2>
+    <h3>English Translation = {{ word_list[0][1] }}</h3>
+    <h3>Maori Translation = {{ word_list[0][0] }}</h3>
+    <h4>Definition = {{ word_list[0][2] }}</h4>
+    <h4>Word ID = {{ word_list[0][6] }}</h4>
+    </div>
+    <div class = word-page-image>
+        <img src="/static/images/{{ word_list[0][5] }}" onerror="this.onerror=null;this.src='/static/images/noimage.png';">
+    </div>
+    <br>
+    <h2><strong> Category Info </strong></h2>
+    <h3>Category Name = {{ cat_info[0] }}</h3>
+    <h4>Description = {{ cat_info[1] }}</h4>
+    <br>
+    <h2><strong> Year Level Info </strong></h2>
+    <h3>Level Name = {{ lev_info[0] }}</h3>
+    <h4>Description = {{ lev_info[1] }}</h4>
+    <br>
+    {% if perms == "admin" %}
+    <h2><strong> EDIT LOG </strong></h2>
+    <table>
+        <tr>
+            <th>Subject ID</th>
+            <th>Subject Type</th>
+            <th>Subject</th>
+            <th>Edit Made</th>
+            <th>Editor ID</th>
+            <th>Editor Name</th>
+            <th>Time And Date Of Edit</th>
+        </tr>
+        {% for edit in edit_list %}
+        <tr>
+            <td>{{ edit[0] }}</td>
+            <td>{{ edit[1] }}</td>
+            <td>{{ edit[6] }}</td>
+            <td>{{ edit[2] }}</td>
+            <td>{{ edit[3] }}</td>
+            <td>{{ edit[5] }}</td>
+            <td>{{ edit[4] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endif %}
 {% endblock %}

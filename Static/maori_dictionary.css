@@ -292,3 +292,14 @@ table, th, td {
 th{
     width: 14%;
 }
+
+.word-page-image{
+    max-height: 250px;
+    overflow: hidden;
+}
+
+
+.word-page{
+    display: flex;
+    justify-content: center;
+}
