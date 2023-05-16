@@ -98,12 +98,12 @@ a, a:visited {
     margin-bottom: 0.5rem;
 }
 
-.word-box-mword {
-    padding: 0.5rem;
+.word-box-words {
+    padding: 0.25rem;
 }
 
-.word-box-eword{
-    padding: 0.5rem;
+.word-box-description{
+    padding: 0.25rem;
 }
 
 .word-box-image {
@@ -285,21 +285,26 @@ h3,h4{
 /* Change the background color of the dropdown button when the dropdown content is shown */
 .dropdown-lev:hover .dropbtn-lev {background-color: #3e8e41;}
 
-table, th, td {
+th, td {
     border: 1px solid black;
-}
-
-th{
     width: 14%;
 }
 
 .word-page-image{
     max-height: 250px;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
 }
 
 
-.word-page{
+table{
     display: flex;
     justify-content: center;
+}
+
+.word-page form{
+    display: flex;
+    justify-content: center;
+    text-align: center;
 }

@@ -71,12 +71,12 @@ def render_dictionary_page(cat_id):
     con = create_connection(DATABASE)
     cur = con.cursor()
     if cat_id == "":
-        query = "SELECT mri_word, eng_word, definition, category, level, image FROM words"
+        query = "SELECT mri_word, eng_word, definition, category, level, image, id FROM words"
         cur.execute(query, )
         word_list = cur.fetchall()
         cat_info = [("All Categories", "The whole undivided dictionary",)]
     else:
-        query = "SELECT mri_word, eng_word, definition, category, level, image FROM words WHERE category =? OR level = ?"
+        query = "SELECT mri_word, eng_word, definition, category, level, image, id FROM words WHERE category =? OR level = ?"
         cur.execute(query, (cat_id, cat_id,))
         word_list = cur.fetchall()
         query = "SELECT title, description FROM categories WHERE id =? "
@@ -327,7 +327,7 @@ def edit_delete_word():
         cur.execute(query)
         category_list = cur.fetchall()
         con.close()
-        return render_template("edit_delete_word.html", word_list=word_list, categories=category_list, logged_in=is_logged_in()[0], perms = is_logged_in()[1])
+        return render_template("edit_delete_word.html", word_list=word_list, categories=category_list, logged_in=is_logged_in()[0], perms = is_logged_in()[1], cat_list=render_cat_lev_menus('C'), lev_list=render_cat_lev_menus('L'))
     return redirect('/admin')
 
 @app.route('/delete_word', methods=['POST'])
@@ -427,7 +427,7 @@ def render_word_page(word_id):
     con = create_connection(DATABASE)
     cur = con.cursor()
     query = "SELECT mri_word, eng_word, definition, category, level, image, id FROM words WHERE id = ?"
-    cur.execute(query, (word_id))
+    cur.execute(query, (word_id,))
     word_list = cur.fetchall()
     query = "SELECT title, description FROM categories WHERE id =? "
     cur.execute(query, (word_list[0][3],))
