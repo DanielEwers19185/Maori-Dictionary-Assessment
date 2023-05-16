@@ -61,7 +61,11 @@ def log_edit(edited_id, edited_type, edit):
 
 @app.route('/')
 def render_homepage():
-    return render_template('home.html', cat_list=render_cat_lev_menus('C'), lev_list=render_cat_lev_menus('L'), logged_in=is_logged_in()[0], perms = is_logged_in()[1])
+    if is_logged_in()[0]:
+        hello=session.get("first_name")
+    else:
+        hello="Remember to create an account!"
+    return render_template('home.html', cat_list=render_cat_lev_menus('C'), lev_list=render_cat_lev_menus('L'), logged_in=is_logged_in()[0], perms = is_logged_in()[1], hello=hello)
 
 
 @app.route('/dictionary/<cat_id>')
@@ -91,9 +95,6 @@ def render_dictionary_page(cat_id):
     con.close()
     print(word_list)
     print(cat_info)
-    # first_name = ""
-    # if is_logged_in () :
-    #    first_name = session['fname']
     return render_template('dictionary.html', cat_list=render_cat_lev_menus('C'), lev_list=render_cat_lev_menus('L'), word_list=word_list, logged_in=is_logged_in()[0], cat_info=cat_info, perms = is_logged_in()[1])
 
 
@@ -365,7 +366,7 @@ def render_edit_word():
         word = word.split(', ')
         word_id = word[0]
         word_name = word[1]+'/'+word[2]
-        return render_template("edit_confirm.html", sub_id=word_id, e_trans=e_trans, w_cat=w_cat, word_def=word_def, w_lev=w_lev, m_trans=m_trans, sub_type="word")
+        return render_template("edit_confirm.html", sub_id=word_id, e_trans=e_trans, w_cat=w_cat, word_def=word_def, w_lev=w_lev, m_trans=m_trans, word_name=word_name, sub_type="word")
     return redirect('/admin')
 
 @app.route('/edit_confirm/<sub_id>/<e_trans>+<w_cat>+<word_def>+<w_lev>+<m_trans>')
@@ -403,7 +404,7 @@ def render_edit_category():
         return render_template("edit_confirm.html", sub_id=e_cat, e_title=e_title, cat_def=cat_def, cat_lev=cat_lev, sub_type="cat")
     return redirect('/admin')
 
-@app.route('/edit_confirm/<sub_id>/<e_title>+<cat_def>+<cat_lev>')
+@app.route('/edit_confirm_cat/<sub_id>/<e_title>+<cat_def>+<cat_lev>')
 def edit_confirm_cat(sub_id, e_title, cat_def, cat_lev):
     if not is_logged_in()[0]:
         return redirect('/?message=Need+to+be+logged+in')
@@ -434,10 +435,11 @@ def render_word_page(word_id):
     cat_info = cur.fetchall()[0]
     cur.execute(query, (word_list[0][4],))
     lev_info = cur.fetchall()[0]
-    if is_logged_in()[1] != "admin":
+    if is_logged_in()[1] == "admin":
         query = "SELECT edited_id, edited_type, edit, editor_id, date_time, editor_name, edited_title FROM edit_log WHERE edited_id=? or edited_id=? or edited_id=?"
         cur.execute(query, (word_id, word_list[0][3], word_list[0][4]))
         edit_list = cur.fetchall()
+        print(edit_list)
     else:
         edit_list = []
     con.close()

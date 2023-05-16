@@ -3,11 +3,13 @@
 {% block pageheading %}Confirm Edit{% endblock %}
 
 {% block main %}
-  <h3>Are you happy to proceed?
+  <h3>
     {% if sub_type == 'word' %}
+    Are you happy to proceed with editing {{ word_name }}?
     <a href="/edit_confirm/{{ sub_id }}/{{ e_trans }}+{{ w_cat }}+{{ word_def }}+{{ w_lev }}+{{ m_trans }}">Yes</a>
     {% elif sub_type == 'cat' %}
-    <a href="/edit_confirm/{{ sub_id }}/{{ e_title }}+{{ cat_def }}+{{ cat_lev }}">Yes</a>
+    Are you happy to proceed in editing?
+    <a href="/edit_confirm_cat/{{ sub_id }}/{{ e_title }}+{{ cat_def }}+{{ cat_lev }}">Yes</a>
     {% endif %}
     <a>/</a>
     <a href="/admin">No</a>

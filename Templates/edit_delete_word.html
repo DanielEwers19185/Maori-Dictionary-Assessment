@@ -3,6 +3,8 @@
 {% block pageheading %}Edit or Delete word:{% endblock %}
 
 {% block main %}
+<h3><strong> Ensure Correct Word Selected </strong></h3>
+<br>
 <h4>Delete a Word</h4>
 <form class="myform" method="post" action="/delete_word">
     <div class="form-group">
@@ -21,6 +23,7 @@
     </div>
 </form>
 <h4>Edit a Word</h4>
+<h6><strong>PLEASE RE-FILL ALL FIELDS (INC. CATEGORY AND LEVEL)</strong></h6>
 <form class="myform" method="post" action="/edit_word">
     <div class="form-group">
         <div class="form-label"><label for="name">Word:</label> </div>

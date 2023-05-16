@@ -48,6 +48,7 @@
 
 
 <h4>Edit a Category</h4>
+<h6><strong>PLEASE RE-FILL ALL FIELDS (INC. TYPE)</strong></h6>
 <form class="myform" method="post" action="/edit_category">
     <div class="form-group">
         <div class="form-label"><label for="name">Category:</label> </div>
@@ -145,20 +146,22 @@
     </div>
     <div class="form-group">
         <div class="form-label"></div>
-        <div class="form-element"><input type="submit" value="Select Word"></div>
+        <div class="form-element"><input type="submit" value="Select Word From Category"></div>
     </div>
 </form>
 <h3>EDIT LOG</h3>
 <table>
-    <tr>
-        <th>Subject ID</th>
-        <th>Subject Type</th>
-        <th>Subject</th>
-        <th>Edit Made</th>
-        <th>Editor ID</th>
-        <th>Editor Name</th>
-        <th>Time And Date Of Edit</th>
-    </tr>
+    <div class="sticky_header">
+        <tr>
+            <th>Subject ID</th>
+            <th>Subject Type</th>
+            <th>Subject</th>
+            <th>Edit Made</th>
+            <th>Editor ID</th>
+            <th>Editor Name</th>
+            <th>Time And Date Of Edit</th>
+        </tr>
+    </div>
     {% for edit in edit_list %}
     <tr>
         <td>{{ edit[0] }}</td>

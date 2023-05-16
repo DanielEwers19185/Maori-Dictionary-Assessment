@@ -7,6 +7,7 @@
 
 body {
     background-color: rgba(236, 240, 241, 1.0);
+    padding-bottom: 1rem;
 }
 
 .container {
@@ -191,9 +192,9 @@ table {
     }
 }
 
-h3,h4{
+h3,h4, h6{
     text-align: center;
-    margin: 2rem 0 0.5rem 0;
+    margin: 1rem 0 0.5rem 0;
 }
 .dropbtn-cat {
   background-color: rgba(44, 62, 80, 1.0); /* darkest blue */
@@ -285,9 +286,17 @@ h3,h4{
 /* Change the background color of the dropdown button when the dropdown content is shown */
 .dropdown-lev:hover .dropbtn-lev {background-color: #3e8e41;}
 
-th, td {
+td {
     border: 1px solid black;
     width: 14%;
+}
+
+th{
+    position: sticky;
+    top: 0;
+    border: 1px solid black;
+    width: 14%;
+    background: aliceblue;
 }
 
 .word-page-image{
