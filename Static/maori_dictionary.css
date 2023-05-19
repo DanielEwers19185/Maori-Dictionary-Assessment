@@ -1,3 +1,6 @@
+/* Styling for the website */
+
+/* Setting font for website */
 * {
     font-family: 'Manrope', sans-serif;
     padding: 0;
@@ -5,16 +8,16 @@
     box-sizing: border-box;
 }
 
+/* Body */
 body {
     background-color: rgba(236, 240, 241, 1.0);
     padding-bottom: 1rem;
 }
 
+/* Maori english dictionary title */
 .container {
     width: 60vw;
     margin: auto;
-    /*background-color: rgba(52, 73, 94, 1.0);*/
-    /*color: rgba(236, 240, 241, 1.0);*/
 }
 
 .container::after {
@@ -23,10 +26,12 @@ body {
     display: table;
 }
 
+/* Images */
 img {
     max-width: 100%;
 }
 
+/* Largest of headers/titles */
 h1 {
     text-align: center;
     font-weight: 200;
@@ -34,105 +39,102 @@ h1 {
     margin: 0;
 }
 
+/* Second largest headers/titles */
 h2 {
     font-size: 2rem;
     text-align: center;
     margin: 0 0 0.5rem 0;
 }
 
+/* Navigation bar */
 nav {
     background-color: rgba(44, 62, 80, 1.0); /* darkest blue */
     text-align: center;
-    /*color: rgba(52, 152, 219, 1.0);!*light blue*!*/
     font-size: 1.5rem;
     padding-top: 0.4rem;
     padding-bottom: 0.7rem;
     color: rgba(52, 152, 219, 1.0); /*light blue*/
 }
 
+/* Navigation bar title */
 .navbar-brand {
     display: inline;
     float: left;
 }
 
+/* Navigation bar links */
 .navbar-links {
     display: inline;
     float: right;
 }
 
+/* Links in navigation bar */
 nav a {
-    /*margin:0 0.5rem;*/
     padding: 0 0.5rem;
     font-size: 1.5rem;
-
-    /*border: 1px solid rgba(52, 152, 219, 1.0);*/
-    /*border-radius:0.5rem;*/
 }
 
+/* Links in navigation bar when hovered over */
 nav a:hover {
-    /*color: rgba(44, 62, 80, 1.0); !* darkest blue *!*/
-    /*background-color: rgba(52, 152, 219, 1.0); !*light blue*!*/
     border-bottom: 3px solid rgba(52, 152, 219, 1.0);
 }
 
+/* Visited links in navigation bar */
 a, a:visited {
     color: rgba(52, 152, 219, 1.0);
-    /*color:hotpink;*/
     text-decoration: none;
 }
 
+/* All word boxes */
 .words {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
 }
 
+/* Each individual word box */
 .word-box {
-    /*width: 13vw;*/
     width: 32%;
-    /*float: left;*/
-    /*display: table-cell;*/
-    /*padding: 0.5rem;*/
-    /*margin: 1vw;*/
     border: 1px solid rgba(189, 195, 199, 1.0);
     color: rgba(44, 62, 80, 1.0);
     margin-bottom: 0.5rem;
 }
 
+/* Words inside word box */
 .word-box-words {
     padding: 0.25rem;
 }
 
+/* Word box description */
 .word-box-description{
-    padding: 0.25rem;
+    padding: 0.5rem;
 }
 
+/* Word box image */
 .word-box-image {
     max-height: 250px;
     overflow: hidden;
 }
 
-.word-box-description {
-    padding: 0.5rem;
-
-}
-
+/* Word box title */
 .word-box h3 {
     font-size: 1.2rem;
     text-align: center;
 }
 
+/* Word box paragraph */
 .word-box p {
     font-size: 0.8rem;
     margin-bottom: 0.3rem;
 }
 
+/* Link in word box */
 .word-box a {
-    border: 1px solid tomato;
     padding: 0.3rem;
     text-align: right;
 }
 
+/* Queries to user */
 .myform {
     width: 80%;
     margin: auto;
@@ -141,28 +143,9 @@ a, a:visited {
     padding-top: 2rem;
 }
 
+/* Individual queries to user */
 .form-group {
     padding-top: 2rem;
-}
-
-.form-label {
-    width: 30%;
-    float: left;
-    padding: 0.3rem;
-}
-
-.form-element {
-    width: 70%;
-    float: left;
-}
-
-.button-group {
-    margin-top: 3rem;
-    text-align: center;
-}
-
-.button-group input {
-    padding: 0.3rem;
 }
 
 .form-group input {
@@ -170,11 +153,29 @@ a, a:visited {
     width: 100%;
 }
 
-table {
-    border-collapse: collapse;
+/* Input receptacles titles */
+.form-label {
+    width: 30%;
+    float: left;
+    padding: 0.3rem;
 }
 
+/* Input receptacles */
+.form-element {
+    width: 70%;
+    float: left;
+}
 
+/* Table for edit logs */
+table {
+    border-collapse: collapse;
+    display: flex;
+    justify-content: center;
+    max-height: 25rem;
+    overflow-y: scroll;
+}
+
+/* Conditions for a smaller screen */
 @media only screen and (max-width: 600px) {
     .container {
         width: 100%;
@@ -185,34 +186,32 @@ table {
     }
 }
 
-
+/* Condition for a smaller screen */
 @media only screen and (max-width: 400px) {
     .word-box {
         width: 100%;
     }
 }
 
+/* Smaller headings */
 h3,h4, h6{
     text-align: center;
     margin: 1rem 0 0.5rem 0;
 }
+
+/* Dropdown button for categories */
 .dropbtn-cat {
   background-color: rgba(44, 62, 80, 1.0); /* darkest blue */
   text-align: center;
-  /*color: rgba(52, 152, 219, 1.0);!*light blue*!*/
   font-size: 1.5rem;
-  /*padding-top: 0.4rem;
-  padding-bottom: 0.7rem;*/
   color: rgba(52, 152, 219, 1.0); /*light blue*/
 }
 
+/* Dropdown button for levels */
 .dropbtn-lev {
   background-color: rgba(44, 62, 80, 1.0); /* darkest blue */
   text-align: center;
-  /*color: rgba(52, 152, 219, 1.0);!*light blue*!*/
   font-size: 1.5rem;
-  /*padding-top: 0.4rem;
-  padding-bottom: 0.7rem;*/
   color: rgba(52, 152, 219, 1.0); /*light blue*/
 }
 
@@ -222,6 +221,7 @@ h3,h4, h6{
   float: right;
 }
 
+/* Dropdown level button formatting */
 .dropdown-lev {
   display: inline;
   float: right;
@@ -233,7 +233,6 @@ h3,h4, h6{
   position: absolute;
   background-color: #f1f1f1;
   min-width: 160px;
-  /*box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);*/
   z-index: 1;
 }
 
@@ -243,7 +242,6 @@ h3,h4, h6{
   position: absolute;
   background-color: #f1f1f1;
   min-width: 160px;
-  /*box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);*/
   z-index: 1;
 }
 
@@ -286,11 +284,13 @@ h3,h4, h6{
 /* Change the background color of the dropdown button when the dropdown content is shown */
 .dropdown-lev:hover .dropbtn-lev {background-color: #3e8e41;}
 
+/* Table (edit log) entries */
 td {
     border: 1px solid black;
     width: 14%;
 }
 
+/* Table (edit log) headers */
 th{
     position: sticky;
     top: 0;
@@ -299,6 +299,7 @@ th{
     background: aliceblue;
 }
 
+/* Image in word page */
 .word-page-image{
     max-height: 250px;
     overflow: hidden;
@@ -306,12 +307,7 @@ th{
     justify-content: center;
 }
 
-
-table{
-    display: flex;
-    justify-content: center;
-}
-
+/* Edit/Delete button in word page */
 .word-page form{
     display: flex;
     justify-content: center;

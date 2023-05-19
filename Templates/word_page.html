@@ -1,12 +1,15 @@
-
+<!-- Loads individual word pages -->
 
 <!-- Making the base HTML show at the top of the page/making part of base html for the page -->
 {% extends "base.html" %}
 
+<!-- Title -->
 {% block pageheading %} {{ word_list[0][0] }}/{{ word_list[0][1] }} {% endblock %}
 
 {% block main %}
 <div class = word-page>
+
+    <!-- Word Info -->
     <h2><strong> Word Info </strong></h2>
     <h3>English Translation = {{ word_list[0][1] }}</h3>
     <h3>Maori Translation = {{ word_list[0][0] }}</h3>
@@ -16,24 +19,32 @@
         <img src="/static/images/{{ word_list[0][5] }}" onerror="this.onerror=null;this.src='/static/images/noimage.png';">
     </div>
     <br>
+
+    <!-- Category Info -->
     <h2><strong> Category Info </strong></h2>
     <h3>Category Name = {{ cat_info[0] }}</h3>
     <h4>Description = {{ cat_info[1] }}</h4>
     <br>
+
+    <!-- Year level info -->
     <h2><strong> Year Level Info </strong></h2>
     <h3>Level Name = {{ lev_info[0] }}</h3>
     <h4>Description = {{ lev_info[1] }}</h4>
     <br>
+
+    <!-- Checking if the user has admin permissions -->
     {% if perms == "admin" %}
-    <br>
-    <br>
-    <br>
+    <br><br><br>
+
+    <!-- Edit delete option for word -->
     <h2><strong>EDIT OR DELETE WORD</strong></h2>
     <form class="myform" method="post" action="/edit_delete_word">
         <input type="hidden" name="e_d_word_cat" value="{{ word_list[0][3] }}" />
         <div class="form-element"><input type="submit" value="EDIT OR DELETE WORD"></div>
     </form>
     <br>
+
+    <!-- Edit log for word -->
     <h2><strong> EDIT LOG </strong></h2>
     <table>
         <tr>
@@ -45,6 +56,7 @@
             <th>Editor Name</th>
             <th>Time And Date Of Edit</th>
         </tr>
+        <!-- Edit entries for word -->
         {% for edit in edit_list %}
         <tr>
             <td>{{ edit[0] }}</td>

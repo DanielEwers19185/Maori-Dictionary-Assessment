@@ -1,40 +1,21 @@
 # Code runs a maori-english dictionary website
 
 # Importing all required modules
-# Importing Flask modules including; Flask itself, "render_template" to render the HTML, "redirect" to redirect the user
-# to different pages/functions, "request" to allow the code to fetch user inputs and "session" to store infomation from
-# only this session
-# Importing allows modules/features that are not generically part of the language to be used
 from flask import Flask, render_template, redirect, request, session
-# Import SQlite3 for the database portion
 import sqlite3
-# Importing "Error" from SQlite so if certain errors occurs the website doesn't just crash and we can make it print the
-# error
 from sqlite3 import Error
-# Importing "Bcrypt" to encrypt passwords using a key specified later, this adds security
 from flask_bcrypt import Bcrypt
-# Importing "datetime" to add timestamps to the edit log.
 from datetime import datetime
 
-# Setting variables allows for  the variable name to stand for what is contained in the veriable, typically the stored
-# infomation is a string of some sort however it can be other variables
-# Setting the database's path as a variable for ease of coding (allows us to type "DATABASE" instead of the whole path)
+# Setting veriables for ease of code
 DATABASE = 'C:/Users/School/OneDrive - Wellington College/13DTS/Maori Dictionary Assessment/Templates/smile.db'
-# Setting "Flask(__name__)" to APP to allow ease of coding and reading
 APP = Flask(__name__)
-# Setting "Bcrypt(APP)" to BCRYPT to allow ease of coding and reading
 BCRYPT = Bcrypt(APP)
-# Setting the encryption key for passwords
 APP.secret_key = "sjyglkeafgh23457767uhd4dgy"
 
 # Creating a function to establish a connection with a given database
-# Functions are section of code that can be referanced and when referanced, will run the functions code, this can
-# include the use of variables that are given in the function call. The function will return any veriables stated.
 def create_connection(db_file: object) -> object:
-    # A try and except loop allows the code to attempt to execute a section of code provided after the "try" statement,
-    # however if it is unable to execute the portion of code due to the error stated in the except statement, it allows
-    # another peice of code to be ran
-    # Attempting to estabish the connection and returning the connection if successfull
+    # Attempting to establish the connection and returning the connection if successful
     try:
         connection = sqlite3.connect(db_file)
         return connection
@@ -42,15 +23,14 @@ def create_connection(db_file: object) -> object:
     # If a connection is unable to be established, getting the error and printing it into the console
     except Error as e:
         print(e)
-    # Returning no values if an error has occured
+    # Returning no values if an error has occurred
     return None
 
 # Creating a function to check if the user is currently logged into the website and the permissions they possess
 def is_logged_in():
-    # If else loops allow certain peices of code to be ran depending on if a condition has been met
     # Checking if there has been an email associated with the session
     if session.get("email") is None:
-        # Setting perms variable to avoid, setting to nothing as the user does not posses special permissions
+        # Setting perms variable to avoid, setting to nothing as the user does not possess special permissions
         perms = ""
         return False, perms
     else:
@@ -62,16 +42,11 @@ def is_logged_in():
 def render_cat_lev_menus(catlev):
     # Creating a connection to the main database
     con = create_connection(DATABASE)
-    # The "SELECT" function fetches certain data values
-    # Creating a query to fetch the values in the 'id' and 'title' rows from the categories table where the type is
-    # corresponding to the dropdown button's title
+    # Creating a query to fetch the required values from the categories table
     query = "SELECT id, title FROM categories WHERE type=?"
-    # Executing the query
     cur = con.cursor()
     cur.execute(query, (catlev))
-    # Setting the results from the query to a list to be used in the creation of the dropdown options in the HTML
     cat_list = cur.fetchall()
-    # Closing the connection
     con.close()
     # Returning the list of results (of categories or levels depending on what has been requested)
     return cat_list
@@ -86,7 +61,6 @@ def log_edit(edited_id, edited_type, edit):
     con = create_connection(DATABASE)
     # Creating a query to fetch the editing user's first name
     query = "SELECT fname FROM user WHERE id =? "
-    # Executing the query
     cur = con.cursor()
     cur.execute(query, (session.get('user_id'),))
     # Setting the editor's name as 'editor name'
@@ -96,28 +70,26 @@ def log_edit(edited_id, edited_type, edit):
     if edited_type == "Lev_Cat":
         # Creating a query to get the title of the edited category
         query = "SELECT title FROM categories WHERE id =? "
-        # Executing the query
+
         cur.execute(query, (edited_id,))
     else:
         # Creating a query to get the title of the edited word
         query = "SELECT eng_word FROM words WHERE id =? "
-        # Executing the query
+
         cur.execute(query, (edited_id,))
 
     # Setting the name of the edited data as "edited_title"
     edited_title = cur.fetchall()[0][0]
-    # The "INSERT" function adds given values into given tables
     # Creating a query to add listed values into their respective (listed) categories
     query = "INSERT INTO edit_log ('edited_id', 'edited_type', 'edit', 'editor_id', 'date_time', 'editor_name'," \
             " 'edited_title') VALUES (?, ?, ?, ?, ?, ?, ?)"
-    # Executing the query with listed data
     cur.execute(query, (edited_id, edited_type, edit, user, time, editor_name, edited_title,))
-    # Commiting the changes to the database
+    # Committing the changes to the database
     con.commit()
     # Closing the connection
     con.close()
 
-# Creating an route/function to render the home page of the website
+# Creating a route/function to render the home page of the website
 @APP.route('/')
 def render_homepage():
     # Checking if the user is logged in
@@ -127,18 +99,16 @@ def render_homepage():
     else:
         # If the user isn't logged in then they are reminded to create an account
         hello="Remember to create an account!"
-    # Render the template and pass through the list of categories, list of levels, whether or not the user is logged in
-    # the user permissions and what to say after "hello"
+    # Render the home page wit required infomation
     return render_template('home.html', cat_list=render_cat_lev_menus('C'), lev_list=render_cat_lev_menus('L'),
                            logged_in=is_logged_in()[0], perms=is_logged_in()[1], hello=hello)
 
-# Creating an route/function to render the dictionary page of the website
+# Creating a route/function to render the dictionary page of the website
 @APP.route('/dictionary/<cat_id>')
 def render_dictionary_page(cat_id):
     # Stripping the brackets off the category/level ID
     cat_id = cat_id.strip("<")
     cat_id = cat_id.strip(">")
-    # Creating a connection to the main database
     con = create_connection(DATABASE)
     cur = con.cursor()
 
@@ -146,38 +116,31 @@ def render_dictionary_page(cat_id):
     if cat_id == "":
         # If the page selected is the entire dictionary, creating a query to fetch all the words and info on them
         query = "SELECT mri_word, eng_word, definition, category, level, image, id FROM words"
-        # Executing the query
         cur.execute(query, )
         # Adding all the fetched words and info on the words to the wordlist that will be loaded by the HTML
         word_list = cur.fetchall()
         # Setting the Category info to be displayed
         cat_info = [("All Categories", "The whole undivided dictionary",)]
     else:
-        # If the page selected is a specific category page, creating a query to fetch all words and info on them that
-        # are in that category
+        # If the page selected is a specific category page, creating a query to fetch all words and info
         query = "SELECT mri_word, eng_word, definition, category, level, image, id FROM words WHERE category =? OR " \
                 "level = ?"
-        # Executing the query
         cur.execute(query, (cat_id, cat_id,))
         # Adding all the fetched words and info on the words to the wordlist that will be loaded by the HTML
         word_list = cur.fetchall()
         # Setting the query to select the title and description of the category selected
         query = "SELECT title, description FROM categories WHERE id =? "
-        # Executing the query
         cur.execute(query, (cat_id,))
         # Setting the Category info to be displayed
         cat_info = cur.fetchall()
 
-    # A for function repeats the embeded code a cerain ammount of times, this is specified in the function
     # Repeats code for each word in the word list to add values/info to each word
     for i in range(len(word_list)):
         # Setting the query to fetch the title of the category and/or level for each word
         query = "SELECT title FROM categories WHERE id =? "
-        # Executing the query for categories
         cur.execute(query, (word_list[i][3], ))
         # Adding the info to the words list
         word_list[i] = word_list[i] + (cur.fetchall()[0])
-        # Executing the query for levels
         cur.execute(query, (word_list[i][4], ))
         # Adding the info to the words list
         word_list[i] = word_list[i] + (cur.fetchall()[0])

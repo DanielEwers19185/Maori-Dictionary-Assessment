@@ -1,11 +1,13 @@
-
+<!-- Loads the edit confirmation page -->
 
 <!-- Making the base HTML show at the top of the page/making part of base html for the page -->
 {% extends "base.html" %}
 
+<!-- Page Title -->
 {% block pageheading %}Confirm Edit{% endblock %}
 
 {% block main %}
+<!-- Gives the choice to confirm/cancel the edit -->
   <h3>
     {% if sub_type == 'word' %}
     Are you happy to proceed with editing {{ word_name }}?

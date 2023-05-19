@@ -1,13 +1,16 @@
-
+<!-- Loads the edit/delete word menu for selected category -->
 
 <!-- Making the base HTML show at the top of the page/making part of base html for the page -->
 {% extends "base.html" %}
 
+<!-- Page title -->
 {% block pageheading %}Edit or Delete word:{% endblock %}
 
 {% block main %}
 <h3><strong> Ensure Correct Word Selected </strong></h3>
 <br>
+
+<!-- Allowing user to select a word to delete -->
 <h4>Delete a Word</h4>
 <form class="myform" method="post" action="/delete_word">
     <div class="form-group">
@@ -20,14 +23,20 @@
             </select>
         </div>
     </div>
+
+    <!-- Submit button allowing to continue to deletion confirmation page -->
     <div class="form-group">
         <div class="form-label"></div>
         <div class="form-element"><input type="submit" value="Delete Word"></div>
     </div>
 </form>
+
+<!-- Fetching info from user for word editing -->
 <h4>Edit a Word</h4>
 <h6><strong>PLEASE RE-FILL ALL FIELDS (INC. CATEGORY AND LEVEL)</strong></h6>
 <form class="myform" method="post" action="/edit_word">
+
+    <!-- Selecting word to edit -->
     <div class="form-group">
         <div class="form-label"><label for="name">Word:</label> </div>
         <div class="form-element">
@@ -38,18 +47,26 @@
             </select>
         </div>
     </div>
+
+    <!-- Getting new Maori word translation -->
     <div class="form-group">
         <div class="form-label"><label for="name">Edited Maori Translation:</label> </div>
         <div class="form-element"><input type="text" name="m_trans" id="m_trans" required></div>
     </div>
+
+    <!-- Getting new english translation -->
     <div class="form-group">
         <div class="form-label"><label for="name">Edited English Translation:</label> </div>
         <div class="form-element"><input type="text" name="e_trans" id="e_trans" required></div>
     </div>
+
+    <!-- Getting new description -->
     <div class="form-group">
         <div class="form-label"><label for="name">Edited English Definition:</label> </div>
         <div class="form-element"><input type="text" name="word_def" id="word_def" required></div>
     </div>
+
+    <!-- Getting new category -->
     <div class="form-group">
         <div class="form-label"><label for="name">Edited Category:</label> </div>
         <div class="form-element">
@@ -62,6 +79,8 @@
             </select>
         </div>
     </div>
+
+    <!-- Getting new level -->
     <div class="form-group">
         <div class="form-label"><label for="name">Edited Level:</label> </div>
         <div class="form-element">
@@ -74,6 +93,8 @@
             </select>
         </div>
     </div>
+
+    <!-- Submit button -->
     <div class="form-group">
         <div class="form-label"></div>
         <div class="form-element"><input type="submit" value="Edit Word"></div>

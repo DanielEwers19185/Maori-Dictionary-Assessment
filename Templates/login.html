@@ -1,21 +1,28 @@
-
+<!-- Loads the login page -->
 
 <!-- Making the base HTML show at the top of the page/making part of base html for the page -->
 {% extends "base.html" %}
 
+<!-- Title -->
 {% block pageheading %}login{% endblock %}
 
 {% block main %}
 <form class="myform" method="post">
+
+  <!-- Allowing the email to be entered to match to the account because emails can only be used once in the database -->
   <div class="form-group" method="POST">
     <div class="form-group">
       <div class="form-label">Email:</div>
       <div class="form-element"><input type="email" name="email" id="emial" required></div>
     </div>
+
+    <!-- Allowing the password to be entered -->
     <div class="form-group">
       <div class="form-label">Password:</div>
       <div class="form-element"><input type="password" name="password" id="password" required></div>
     </div>
+
+    <!-- Submit button -->
     <div class="form-group">
       <div class="form-label"></div>
       <div class="form-element"><input type="submit" value="Login" required></div>
@@ -23,5 +30,6 @@
     </div>
   </div>
 </form>
+<!-- Offering a signup option for those without an account -->
 <p><br><br><br>If you don't yet have an account, please <a href="/signup">sign up</a>.</p>
 {% endblock %}

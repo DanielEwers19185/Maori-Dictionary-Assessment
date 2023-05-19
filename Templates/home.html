@@ -1,4 +1,4 @@
-
+<!-- Loads the home page -->
 
 <!-- Making the base HTML show at the top of the page/making part of base html for the page -->
 {% extends "base.html" %}
@@ -6,6 +6,7 @@
 {% block pageheading %}welcome{% endblock %}
 
 {% block main %}
+<!-- Custom greeting depending on if they are signed in or not -->
 <strong><em>Hello {{ hello }}</em></strong>
 <p>Welcome to the Maori - English Dictionary!</p>
 <p>Browse in categories, year levels or everything at once!</p>
