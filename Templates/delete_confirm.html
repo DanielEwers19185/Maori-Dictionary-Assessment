@@ -1,13 +1,19 @@
+<!-- This loads the deletion confirmation page  -->
+
+<!-- Making the base HTML show at the top of the page/making part of base html for the page -->
 {% extends "base.html" %}
 
+<!-- Page heading -->
 {% block pageheading %}Confirm Delete{% endblock %}
 
+<!-- gives choice to confirm/cancel the deletion -->
 {% block main %}
   <h3>Are you sure you want to delete {{ name }}?
     <a href="/delete_confirm/{{ sub_id }}/{{ type }}">Yes</a>
     <a>/</a>
     <a href="/admin">No</a>
     {% if type == 'C' or type == 'L' %}
+    <!-- Extra warning -->
     <p><strong>THIS WILL DELETE ALL WORDS IN THE CATEGORY/LEVEL</strong></p>
     {% endif %}
   </h3>

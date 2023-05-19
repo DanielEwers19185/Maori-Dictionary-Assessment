@@ -1,19 +1,30 @@
+<!-- This loads the Admin page -->
+
+<!-- Making the base HTML show at the top of the page/making part of base html for the page -->
 {% extends "base.html" %}
 
+<!-- Page heading -->
 {% block pageheading %}administration{% endblock %}
 
+<!-- Starting  the main block -->
 {% block main %}
+<!-- Setting titles -->
 <h3>Category/Level Admin</h3>
 <h4>Add a category/Level</h4>
+
+<!-- Add category/level form -->
 <form class="myform" method="post" action="/add_category">
+    <!-- Getting input for category/level name/title -->
     <div class="form-group">
         <div class="form-label"><label for="name">Category/Level Name:</label> </div>
         <div class="form-element"><input type="text" name="name" id="name" required></div>
     </div>
+    <!-- Getting input for category/level description -->
     <div class="form-group">
         <div class="form-label"><label for="name">Category/Level Description:</label> </div>
         <div class="form-element"><input type="text" name="description" id="description" required></div>
     </div>
+    <!-- Getting input for category/level type -->
     <div class="form-group">
         <div class="form-label"><label for="name">Type:</label> </div>
         <div class="form-element">
@@ -23,13 +34,17 @@
             </select>
         </div>
     </div>
+    <!-- Submit button for adding category/level -->
     <div class="form-group">
         <div class="form-label"></div>
         <div class="form-element"><input type="submit" value="Add Category/Level"></div>
     </div>
 </form>
+
+<!-- Deleting category/level form -->
 <h4>Delete a category/level</h4>
 <form class="myform" method="post" action="/delete_category">
+    <!-- Selection of level/category to delete -->
     <div class="form-group">
         <div class="form-label"><label for="name">Category/Level Name:</label> </div>
         <div class="form-element">
@@ -40,18 +55,20 @@
             </select>
         </div>
     </div>
+    <!-- Submit button that leads to delete confirm page -->
     <div class="form-group">
         <div class="form-label"></div>
         <div class="form-element"><input type="submit" value="Delete Category/Level"></div>
     </div>
 </form>
 
-
-<h4>Edit a Category</h4>
+<!-- Editing a category form -->
+<h4>Edit a Category/level</h4>
 <h6><strong>PLEASE RE-FILL ALL FIELDS (INC. TYPE)</strong></h6>
 <form class="myform" method="post" action="/edit_category">
+    <!-- selection of the category/level to edit -->
     <div class="form-group">
-        <div class="form-label"><label for="name">Category:</label> </div>
+        <div class="form-label"><label for="name">Category/level:</label> </div>
         <div class="form-element">
             <select id="edited_category" name="edited_category">
                 {% for i in categories %}
@@ -60,14 +77,17 @@
             </select>
         </div>
     </div>
+    <!-- Getting input for the edited title -->
     <div class="form-group">
         <div class="form-label"><label for="name">Edited Title:</label> </div>
         <div class="form-element"><input type="text" name="cat_title" id="cat_title" required></div>
     </div>
+    <!-- Getting input for the edited definition -->
     <div class="form-group">
         <div class="form-label"><label for="name">Edited Definition:</label> </div>
         <div class="form-element"><input type="text" name="cat_def" id="cat_def" required></div>
     </div>
+    <!-- Getting input for the edetied type (level/category) -->
     <div class="form-group">
         <div class="form-label"><label for="name">Edited Type:</label> </div>
         <div class="form-element">
@@ -77,28 +97,34 @@
             </select>
         </div>
     </div>
+    <!-- Submit button to the confirmation page -->
     <div class="form-group">
         <div class="form-label"></div>
         <div class="form-element"><input type="submit" value="Edit Category"></div>
     </div>
 </form>
 
-
 <h3>Word Admin</h3>
+
+<!-- Adding a word form -->
 <h4>Add a word</h4>
 <form class="myform" method="post" action="/add_word">
+    <!-- Getting input for maori translation of the word -->
     <div class="form-group">
         <div class="form-label"><label for="name">Maori Translation:</label> </div>
         <div class="form-element"><input type="text" name="m_trans" id="m_trans" required></div>
     </div>
+    <!-- Getting the input for the english translation of the word -->
     <div class="form-group">
         <div class="form-label"><label for="name">English Translation:</label> </div>
         <div class="form-element"><input type="text" name="e_trans" id="e_trans" required></div>
     </div>
+    <!-- Getting the input for the definition of the word (in english) -->
     <div class="form-group">
         <div class="form-label"><label for="name">English Definition:</label> </div>
         <div class="form-element"><input type="text" name="word_def" id="word_def" required></div>
     </div>
+    <!-- Getting input for what category the word is in -->
     <div class="form-group">
         <div class="form-label"><label for="name">Category:</label> </div>
         <div class="form-element">
@@ -111,6 +137,7 @@
             </select>
         </div>
     </div>
+    <!-- Getting input for what level the form is in -->
     <div class="form-group">
         <div class="form-label"><label for="name">Level:</label> </div>
         <div class="form-element">
@@ -123,6 +150,7 @@
             </select>
         </div>
     </div>
+    <!-- Getting the input for the image file name -->
     <div class="form-group">
         <div class="form-label"><label for="name">Image File:</label> </div>
         <div class="form-element"><input type="file" name="word_img" id="word_img"></div>
@@ -132,8 +160,11 @@
         <div class="form-element"><input type="submit" value="Add Word"></div>
     </div>
 </form>
+
+<!-- link to form to delete/edit word -->
 <h4>Delete or Edit a word</h4>
 <form class="myform" method="post" action="/edit_delete_word">
+    <!-- Choose the category that the word that is wanted to be deleted is in -->
     <div class="form-group">
         <div class="form-label"><label for="name">Word Category:</label> </div>
         <div class="form-element">
@@ -144,24 +175,27 @@
             </select>
         </div>
     </div>
+    <!-- submit button that links to the edit page for words in the stated category -->
     <div class="form-group">
         <div class="form-label"></div>
         <div class="form-element"><input type="submit" value="Select Word From Category"></div>
     </div>
 </form>
+
+<!-- Displaying the edit log -->
 <h3>EDIT LOG</h3>
 <table>
-    <div class="sticky_header">
-        <tr>
-            <th>Subject ID</th>
-            <th>Subject Type</th>
-            <th>Subject</th>
-            <th>Edit Made</th>
-            <th>Editor ID</th>
-            <th>Editor Name</th>
-            <th>Time And Date Of Edit</th>
-        </tr>
-    </div>
+    <!-- Defining the log's categories -->
+    <tr>
+        <th>Subject ID</th>
+        <th>Subject Type</th>
+        <th>Subject</th>
+        <th>Edit Made</th>
+        <th>Editor ID</th>
+        <th>Editor Name</th>
+        <th>Time And Date Of Edit</th>
+    </tr>
+    <!-- Getting all the edits -->
     {% for edit in edit_list %}
     <tr>
         <td>{{ edit[0] }}</td>

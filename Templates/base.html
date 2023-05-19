@@ -1,9 +1,12 @@
+<!-- This Code loads on every page and serves the menu bar -->
 <!DOCTYPE html>
 <html>
 
+<!-- Sets out assests used by HTML -->
 <head>
     <meta charset="utf-8">
-    <title>Maori - English Dictionary | home</title>
+    <!-- Display on tab icon -->
+    <title>Maori - English Dictionary</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css"/>
@@ -11,19 +14,24 @@
 </head>
 
 <body>
+<!-- Sets out the top navigation bar -->
 <nav>
     <div class="container">
+        <!-- Adds title to the navbar -->
         <div class="navbar-brand">Maori-English Dictionary</div>
+
+        <!-- Adds links to the navbar -->
         <div class="navbar-links">
             {% if logged_in %}
             <a href="/logout">logout</a>
             {% if perms == 'admin' %}<a href="/admin">admin</a>{% endif %}
-
             {% else %}
             <a href="/login">login </a>
             <a href="/signup">Signup</a>
             {% endif %}
         </div>
+
+        <!-- Adds dropdown button for category navigation -->
         <div class="dropdown-cat">
             <button class="dropbtn-cat">Categories</button>
             <div class="dropdown-content-cat">
@@ -32,6 +40,8 @@
                 {% endfor %}
             </div>
         </div>
+
+        <!-- Adds dropdown button for level navigation -->
         <div class="dropdown-lev">
             <button class="dropbtn-lev">Yr Levels</button>
             <div class="dropdown-content-lev">
@@ -40,12 +50,16 @@
                 {% endfor %}
             </div>
         </div>
+
+        <!-- Adds home and all categories link -->
         <div class="navbar-links">
             <a href="/">Home</a>
             <a href="/dictionary/<>">All Categories</a>
         </div>
     </div>
 </nav>
+
+<!-- Adds maori-english dictionary title to all pages -->
 <div class="container">
     <header>
         <h1>Maori - English Dictionary</h1>

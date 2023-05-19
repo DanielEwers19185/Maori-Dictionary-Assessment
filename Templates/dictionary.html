@@ -1,13 +1,21 @@
+<!-- This loads the dictionary page -->
+
+<!-- Making the base HTML show at the top of the page/making part of base html for the page -->
 {% extends 'base.html' %}
 
+<!-- Title of the page -->
 {% block pageheading %}
 Dictionary
 {% endblock %}
+
 {% block main %}
+<!-- Title and description of the category shown on the page -->
 <div class = title>
     <h2>{{ cat_info[0][0] }}</h2>
     <h3>{{ cat_info[0][1] }}</h3>
 </div>
+
+<!-- Creating the word boxes for each word -->
     <div class ="words">
         {% for word in word_list %}
         <div class="word-box">
